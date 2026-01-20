@@ -1,0 +1,116 @@
+<% layout("/layouts/boilerplate") -%>
+<div class="min-h-screen flex items-center justify-center
+            bg-gradient-to-br from-gray-50 to-white
+            dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+            px-4 transition-colors duration-300">
+
+  <div class="w-full max-w-md">
+
+    <!-- Card -->
+    <div class="bg-white dark:bg-gray-800
+                rounded-2xl shadow-2xl p-6 sm:p-8
+                border border-gray-200 dark:border-gray-700">
+
+      <!-- Brand -->
+      <div class="text-center mb-6">
+        <div class="flex justify-center items-center space-x-3 mb-2">
+          <div class="flex items-center justify-center w-12 h-12">
+            <img 
+              src="/images/logo.png"
+              class="inline-block drop-shadow-lg hover:rotate-3 transition-transform duration-300"
+               alt="Logo"
+            >
+          </div>
+          <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+            RootShield
+          </span>
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Secure Password Reset
+        </p>
+      </div>
+
+      <!-- Title -->
+      <div class="text-center mb-5">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          Create New Password
+        </h2>
+
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+          Choose a strong password to keep your RootShield account secure.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form
+        action="/reset-password/<%= token %>"
+        method="POST"
+        class="space-y-5"
+        novalidate
+      >
+
+        <!-- New Password -->
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
+            New Password
+          </label>
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            minlength="8"
+            placeholder="Enter a strong password"
+            class="w-full px-4 py-3 rounded-xl border
+                   border-gray-300 dark:border-gray-600
+                   bg-white dark:bg-gray-700
+                   text-gray-900 dark:text-white
+                   focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500
+                   dark:focus:ring-cyan-400 dark:focus:border-cyan-400
+                   transition-all duration-200"
+          />
+
+          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            Minimum 8 characters, include letters & numbers.
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600
+                 text-white font-semibold rounded-xl
+                 shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          Reset Password
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="my-6 border-t border-gray-300 dark:border-gray-700"></div>
+
+      <!-- Help -->
+      <p class="text-center text-sm text-gray-700 dark:text-gray-300">
+        Facing issues?
+        <a
+          href="/contact"
+          class="text-cyan-600 dark:text-cyan-400 font-semibold hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors"
+        >
+          Contact RootShield Support
+        </a>
+      </p>
+
+    </div>
+
+    <!-- Trust Footer -->
+    <p class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
+      Your password is encrypted and securely stored by RootShield.
+    </p>
+
+  </div>
+</div>
