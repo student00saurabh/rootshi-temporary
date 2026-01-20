@@ -1,46 +1,50 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <title>Zoopito</title>
+  <title>Root Shield | Secure Access & Protection Platform</title>
 
   <!-- Primary Meta Tags -->
-  <meta name="title" content="Zoopito" />
-  <meta name="description" content="Zoopito is a platform for managing veterinary and sales teams." />
-  <meta name="keywords" content="zoopito, veterinary, sales, team management" />
+  <meta name="title" content="Root Shield | Secure Access & Protection Platform" />
+  <meta
+    name="description"
+    content="Root Shield is a secure access and protection platform designed for administrators, analysts, and organizations to safeguard systems and digital assets."
+  />
+  <meta
+    name="keywords"
+    content="root shield, cybersecurity platform, secure access, system protection, admin security, root access management"
+  />
   <meta name="author" content="Saurabh Mishra" />
   <meta name="robots" content="index, follow" />
 
-  <!-- Open Graph / Facebook / LinkedIn -->
+  <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://zoopito.com/" />
-  <meta property="og:title" content="Zoopito - Veterinary & Sales Team Management Platform" />
-  <meta property="og:description" content="Zoopito is a platform for managing veterinary and sales teams." />
-  <meta property="og:image" content="https://zoopito.com/images/favicon-32x32.png" />
+  <meta property="og:url" content="https://rootshield.in/" />
+  <meta property="og:title" content="Root Shield | Secure Access & Protection Platform" />
+  <meta
+    property="og:description"
+    content="Protect systems, manage access, and secure digital infrastructure with Root Shield."
+  />
+  <meta property="og:image" content="https://rootshield.in/images/logo.png" />
+  <meta property="og:site_name" content="Root Shield" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://zoopito.com/" />
-  <meta property="twitter:title" content="Zoopito - Veterinary & Sales Team Management Platform" />
-  <meta property="twitter:description" content="Zoopito is a platform for managing veterinary and sales teams." />
-  <meta property="twitter:image" content="https://zoopito.com/images/zoopito-og.png" />
-
-  <!-- WhatsApp / LinkedIn (uses OG tags automatically) -->
-  <meta property="og:site_name" content="Zoopito" />
+  <meta property="twitter:url" content="https://rootshield.in/" />
+  <meta property="twitter:title" content="Root Shield | Secure Access & Protection Platform" />
+  <meta
+    property="twitter:description"
+    content="Root Shield helps organizations manage secure access and protect critical systems."
+  />
+  <meta property="twitter:image" content="https://rootshield.in/images/logo.png" />
 
   <!-- Favicons -->
-  <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
-  <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
-  <link rel="manifest" href="/images/site.webmanifest" />
-  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#10b981" />
-  <meta name="msapplication-TileColor" content="#10b981" />
-  <meta name="theme-color" content="#10b981" />
+  <link rel="icon" href="/images/logo.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png" />
+  <meta name="theme-color" content="#1e3a8a" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -59,47 +63,46 @@
     rel="stylesheet"
   />
 
-  <!-- AOS -->
+  <!-- AOS Animation -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
+  <!-- Compiled CSS -->
   <link rel="stylesheet" href="/css/output.css" />
 
   <!-- Smooth Theme Transition -->
   <style>
     html, body {
-      transition: background-color 0.25s, color 0.25s;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
   </style>
 
-  <!-- Dark mode detection -->
+  <!-- Dark Mode Detection -->
   <script>
     if (localStorage.theme === "dark") {
       document.documentElement.classList.add("dark");
     }
   </script>
-
-  
-     
 </head>
 
-<!-- Default background for light mode -->
 <body class="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
   <!-- Navbar -->
   <%- include("../includes/navbar.ejs") %>
 
-  <!-- Flash Messages -->
-  <div class="w-full mx-auto" style="min-height: 100vh !important;">
+  <!-- Flash Messages + Page Content -->
+  <main class="w-full min-h-screen">
     <%- include("../includes/flash.ejs") %>
     <%- body %>
-  </div>
+  </main>
 
   <!-- Footer -->
   <%- include("../includes/footer.ejs") %>
 
   <!-- AOS -->
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>AOS.init();</script>
+  <script>
+    AOS.init({ once: true, duration: 700, easing: "ease-out-cubic" });
+  </script>
 
   <!-- App Script -->
   <script src="/js/script.js"></script>

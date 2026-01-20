@@ -1,10 +1,12 @@
 const crypto = require("crypto");
-const User = require("../models/user.js");
+const User = require("../models/user");
 
-// Load .env in development
+// Load env in development
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+
+const brevo = require("@getbrevo/brevo");
 
 /* ─────────────────────────────────────────
    RENDER FORGOT PASSWORD FORM
@@ -17,7 +19,7 @@ module.exports.restform = async (req, res) => {
 };
 
 /* ─────────────────────────────────────────
-   FORGOT PASSWORD → GENERATE RESET LINK
+   FORGOT PASSWORD → SEND RESET EMAIL
 ───────────────────────────────────────── */
 module.exports.forgotPassword = async (req, res) => {
   try {
@@ -32,22 +34,21 @@ module.exports.forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // Security: don't reveal whether user exists
+    // Security: no user existence leak
     if (!user) {
       return res.render("emailer/emailSent.ejs", {
         message:
-          "Please enter a registered email address to receive reset instructions.",
-        alertmsg: true,
+          "If this email is registered, a reset link will be sent shortly.",
+        alertmsg: false,
       });
     }
 
-    // Generate secure token
+    // Generate token
     const token = crypto.randomBytes(32).toString("hex");
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
     await user.save();
 
-    // Auto-detect domain (Root Shield)
     const domain =
       process.env.DOMAIN ||
       (process.env.NODE_ENV === "production"
@@ -56,68 +57,43 @@ module.exports.forgotPassword = async (req, res) => {
 
     const resetLink = `${domain}/reset-password/${token}`;
 
-    /* ─────────────────────────────────────────
-       BREVO EMAIL CONFIG
-    ───────────────────────────────────────── */
-    const brevo = require("@getbrevo/brevo");
+    /* ───── BREVO CONFIG ───── */
     const apiInstance = new brevo.TransactionalEmailsApi();
     apiInstance.setApiKey(
       brevo.TransactionalEmailsApiApiKeys.apiKey,
       process.env.BREVO_API_KEY,
     );
 
-    // EMAIL TEMPLATE – ROOT SHIELD
     const htmlContent = `
-      <div style="font-family: Arial, sans-serif; max-width:600px; margin:auto; padding:24px; background:#f9fafb; border-radius:10px;">
-        
-        <div style="text-align:center; margin-bottom:20px;">
-          <h1 style="color:#1e3a8a;">Root Shield</h1>
-          <p style="color:#555;">Secure Account Recovery</p>
-        </div>
+      <div style="font-family:Arial; max-width:600px; margin:auto; padding:24px;">
+        <h1 style="color:#1e3a8a;">Root Shield</h1>
+        <p>Secure Password Reset</p>
 
-        <h2 style="color:#111;">Reset Your Password</h2>
-
-        <p>Hello <strong>${user.name || "Root Shield User"}</strong>,</p>
+        <p>Hello <strong>${user.name || "User"}</strong>,</p>
 
         <p>
-          We received a request to reset your password for your <b>Root Shield</b> account.
-          This account may belong to an <b>Admin</b>, <b>Security Analyst</b>, or <b>Platform User</b>.
+          We received a request to reset your Root Shield account password.
         </p>
 
         <div style="text-align:center; margin:30px 0;">
-          <a href="${resetLink}" 
-             style="background:#1e3a8a; color:#ffffff; padding:12px 28px; 
-                    text-decoration:none; border-radius:8px; font-size:16px;">
+          <a href="${resetLink}"
+             style="background:#1e3a8a;color:#fff;padding:12px 24px;
+                    text-decoration:none;border-radius:6px;">
             Reset Password
           </a>
         </div>
 
-        <p>
-          This link will expire in <strong>1 hour</strong>.
-        </p>
+        <p>This link will expire in 1 hour.</p>
 
-        <p style="word-break:break-all;">
-          If the button does not work, copy and paste this link:
-          <br>
-          <a href="${resetLink}" style="color:#2563eb;">
-            ${resetLink}
-          </a>
-        </p>
-
-        <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;">
-
-        <p style="font-size:12px; color:#777;">
-          If you did not request this password reset, you can safely ignore this email.
-          <br>
-          This is an automated message from Root Shield.
+        <p style="font-size:12px;color:#777;">
+          If you didn’t request this, please ignore this email.
         </p>
       </div>
     `;
 
-    // SEND EMAIL
     await apiInstance.sendTransacEmail({
       sender: {
-        email: "info@rootshield.in",
+        email: "thecubicals123@gmail.com", // VERIFIED SENDER
         name: "Root Shield",
       },
       to: [{ email: user.email }],
@@ -125,15 +101,12 @@ module.exports.forgotPassword = async (req, res) => {
       htmlContent,
     });
 
-    req.flash(
-      "success",
-      "If the email exists, a password reset link has been sent.",
-    );
-    return res.redirect("/login");
-  } catch (error) {
-    console.error("Root Shield Reset Email Error:", error);
-    req.flash("error", "Unable to send reset email. Try again later.");
-    return res.redirect("/login");
+    req.flash("success", "Password reset link sent to your email.");
+    res.redirect("/login");
+  } catch (err) {
+    console.error("Root Shield Reset Email Error:", err);
+    req.flash("error", "Unable to send reset email.");
+    res.redirect("/login");
   }
 };
 
@@ -153,15 +126,15 @@ module.exports.getResetPassword = async (req, res) => {
     }
 
     res.render("emailer/reset.ejs", { token: req.params.token });
-  } catch (error) {
-    console.error("Get Reset Error:", error);
+  } catch (err) {
+    console.error(err);
     req.flash("error", "Something went wrong");
     res.redirect("/login");
   }
 };
 
 /* ─────────────────────────────────────────
-   RESET PASSWORD (FINAL)
+   RESET PASSWORD FINAL
 ───────────────────────────────────────── */
 module.exports.postResetPassword = async (req, res) => {
   try {
@@ -179,13 +152,13 @@ module.exports.postResetPassword = async (req, res) => {
     });
 
     if (!user) {
-      req.flash("error", "Reset link is invalid or expired");
+      req.flash("error", "Reset link expired or invalid");
       return res.redirect("/login");
     }
 
     user.setPassword(password, async (err, updatedUser) => {
       if (err) {
-        req.flash("error", "Failed to reset password");
+        req.flash("error", "Password reset failed");
         return res.redirect("/login");
       }
 
@@ -193,11 +166,11 @@ module.exports.postResetPassword = async (req, res) => {
       updatedUser.resetPasswordExpires = undefined;
       await updatedUser.save();
 
-      req.flash("success", "Password reset successfully. Please login.");
+      req.flash("success", "Password reset successful. Please login.");
       res.redirect("/login");
     });
-  } catch (error) {
-    console.error("Post Reset Error:", error);
+  } catch (err) {
+    console.error(err);
     req.flash("error", "Something went wrong");
     res.redirect("/login");
   }
