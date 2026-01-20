@@ -51,7 +51,7 @@ module.exports.forgotPassword = async (req, res) => {
     const domain =
       process.env.DOMAIN ||
       (process.env.NODE_ENV === "production"
-        ? "https://rootshield.com"
+        ? "https://rootshield.in"
         : "http://localhost:3000");
 
     const resetLink = `${domain}/reset-password/${token}`;
@@ -117,7 +117,7 @@ module.exports.forgotPassword = async (req, res) => {
     // SEND EMAIL
     await apiInstance.sendTransacEmail({
       sender: {
-        email: "no-reply@rootshield.com",
+        email: "info@rootshield.in",
         name: "Root Shield",
       },
       to: [{ email: user.email }],
