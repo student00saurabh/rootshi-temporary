@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/user.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/zoopito";
+const MONGO_URL = "mongodb://127.0.0.1:27017/rootshield";
 
 main()
   .then(() => {
@@ -17,8 +17,8 @@ async function main() {
 
 const initDB = async () => {
   try {
-    const user = await User.updateOne({ role: "ADMIN" });
-    console.log("Admin user check complete", user);
+    const user = await User.deleteOne({ email: "thecubicals123@gmail.com" });
+    console.log("Admin user removed");
   } catch {
     console.log("Error in checking admin user");
   }

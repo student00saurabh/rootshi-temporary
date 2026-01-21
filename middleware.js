@@ -62,12 +62,19 @@ module.exports.isVerified = async (req, res, next) => {
   next();
 };
 
-// module.exports.validateLink = (req, res, next) => {
-//   let { error } = linkSchema.validate(req.body);
-//   if (error) {
-//     let errMsg = error.details.map((el) => el.message).join(",");
-//     throw new ExpressError(400, errMsg);
-//   } else {
-//     next();
-//   }
-// };
+module.exports.isVerified = async (req, res, next) => {
+  const { email } = req.body; // 👍 extract only email
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    req.flash("error", "User not found.");
+    return res.redirect("/login");
+  }
+
+  if (!user.isvalid) {
+    req.flash("error", "Please verify your email first.");
+    return res.redirect(`/verify-email?email=${email}`);
+  }
+
+  next();
+};
