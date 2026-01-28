@@ -17,8 +17,10 @@ async function main() {
 
 const initDB = async () => {
   try {
-    const user = await User.deleteOne({ email: "thecubicals123@gmail.com" });
-    console.log("Admin user removed");
+    const users = await User.findOneAndDelete({
+      email: "thecubicals123@gmail.com",
+    });
+    console.log("Admin user removed", users);
   } catch {
     console.log("Error in checking admin user");
   }

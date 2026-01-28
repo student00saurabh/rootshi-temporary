@@ -321,7 +321,7 @@ module.exports.forgotPassword = async (req, res) => {
 
     // SEND EMAIL
     await apiInstance.sendTransacEmail({
-      sender: { email: "noreply@rootshield.in", name: "RootShield Security" },
+      sender: { email: "info@rootshield.in", name: "RootShield Security" },
       to: [{ email: user.email, name: user.name || user.username }],
       subject: "🔒 Reset Your Password | RootShield Account Security",
       htmlContent: htmlContent,

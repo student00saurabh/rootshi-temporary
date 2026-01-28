@@ -36,6 +36,11 @@ const contactSchema = new Schema({
     required: true,
     default: Date.now,
   },
+  isSeen: {
+    type: Boolean,
+    default: false,
+  },
+
   gps: {
     latitude: Number,
     longitude: Number,
