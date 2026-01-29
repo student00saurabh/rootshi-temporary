@@ -1,32 +1,47 @@
 const User = require("../models/user");
 const Servise = require("../models/services");
+const Course = require("../models/cources");
+
+module.exports.homePage = async (req, res, next) => {
+  if (!req.user) {
+    const totalUsers = (await User.find()).length;
+    const totalInstructors = (await User.find({ role: "admin" })).length;
+    const totalCources = (await Course.find()).length;
+    const cources = await Course.find().populate("teacher").limit(6);
+    const popularCourse = await Course.findOne({ isPopular: true }).populate(
+      "teacher",
+    );
+
+    res.render("rootshield/home.ejs", {
+      totalUsers,
+      totalInstructors,
+      totalCources,
+      cources,
+      popularCourse,
+    });
+  } else {
+    next();
+  }
+};
 
 module.exports.index = async (req, res) => {
   try {
-    if (req.user && req.user.role === "ADMIN") {
-      const user = await User.findById(req.user._id);
-      const notifications = user.notifications || [];
-      const notificationCount = notifications.length;
-      const tile = "Admin Dashboard";
-      const shortDescription =
-        "This is admin panel admin can control everything from here sales team, farmers, animals, vaccinations etc.";
-      const farmersCount = await Farmer.countDocuments();
-      const animalsCount = await Animal.countDocuments();
-      const paravetsCount = await Paravet.countDocuments();
-      // const servicesCount = await Servise.countDocuments();
-      const salesTeamsCount = await SalesTeam.countDocuments();
-      res.render("admin/index.ejs", {
-        User: user,
-        tile,
-        shortDescription,
-        farmersCount,
-        animalsCount,
-        paravetsCount,
-        salesTeamsCount,
-      });
-    } else {
-      res.render("rootshield/home.ejs");
-    }
+    const totalUsers = (await User.find()).length;
+    const totalInstructors = (await User.find({ role: "admin" })).length;
+    const totalCources = (await Course.find()).length;
+    const cources = await Course.find({ addInHomePage: true })
+      .populate("teacher")
+      .limit(6);
+    const popularCourse = await Course.findOne({ isPopular: true }).populate(
+      "teacher",
+    );
+    res.render("rootshield/home.ejs", {
+      totalUsers,
+      totalInstructors,
+      totalCources,
+      cources,
+      popularCourse,
+    });
   } catch (error) {
     console.log(error);
     req.flash("error", "Something went wrong!");
@@ -71,83 +86,211 @@ module.exports.contact = (req, res) => {
   res.render("others/contact.ejs");
 };
 
-module.exports.getSitemap = (req, res) => {
-  const baseUrl = "https://tl-hsxa.onrender.com"; // change to your domain
+//courses
+module.exports.allCourses = async (req, res) => {
+  try {
+    // Query params
+    const page = parseInt(req.query.page) || 1;
+    const limit = 12;
+    const search = req.query.search || "";
 
-  const sitemap = `
-    <?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      <url>
-        <loc>${baseUrl}/</loc>
-        <changefreq>daily</changefreq>
-        <priority>1.0</priority>
-      </url>
+    // Build search filter
+    const searchFilter = search
+      ? {
+          $or: [
+            { title: { $regex: search, $options: "i" } },
+            { shortDescription: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
 
-      <url>
-        <loc>${baseUrl}/login</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-      </url>
+    // Count total courses
+    const totalCourses = await Course.countDocuments(searchFilter);
 
-      <url>
-        <loc>${baseUrl}/signup</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-      </url>
+    // Fetch paginated courses
+    const cources = await Course.find(searchFilter)
+      .populate("teacher", "name")
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
-      <url>
-        <loc>${baseUrl}/stats/public-links</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-      </url>
-
-      <url>
-        <loc>${baseUrl}/about</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-      </url>
-
-      <url>
-        <loc>${baseUrl}/privacy-policy</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-      </url>
-
-      <url>
-        <loc>${baseUrl}/terms-conditions</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-      </url>
-
-      <url>
-        <loc>${baseUrl}/stats</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-      </url>
-    </urlset>
-  `.trim();
-
-  res.header("Content-Type", "application/xml");
-  res.send(sitemap);
+    res.render("rootshield/courses.ejs", {
+      cources,
+      currentPage: page,
+      totalPages: Math.ceil(totalCourses / limit),
+      search,
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "Something went wrong!");
+    res.redirect("/login");
+  }
 };
 
-module.exports.getAdsTxt = (req, res) => {
-  const adsText = `
-    google.com, pub-1329737604469399, DIRECT, f08c47fec0942fa0
-  `.trim();
-
-  res.header("Content-Type", "text/plain");
-  res.send(adsText);
+module.exports.renderNewCourseForm = (req, res) => {
+  res.render("rootshield/newcourse.ejs", { course: {} });
 };
 
-exports.getRobotsTxt = (req, res) => {
-  const robots = `
-    User-agent: *
-    Allow: /
+module.exports.createNewCourse = async (req, res) => {
+  try {
+    const {
+      title,
+      shortDescription,
+      description,
+      price,
+      actualPrice,
+      courceType,
+      duration,
+      lounchedDate,
+      addInHomePage,
+    } = req.body;
 
-    Sitemap: https://tl-hsxa.onrender.com/sitemap.xml
-  `.trim();
+    const course = new Course({
+      teacher: req.user._id, // assuming admin/teacher is logged in
+      title,
+      shortDescription,
+      discription: description,
+      price,
+      actualPrice,
+      courceType,
+      duration,
+      lounchedDate: lounchedDate ? new Date(lounchedDate) : undefined,
+      addInHomePage: addInHomePage === "on",
+    });
 
-  res.header("Content-Type", "text/plain");
-  res.send(robots);
+    // Optional: handle image if using file upload
+    if (req.file) {
+      course.image = {
+        url: req.file.path, // or req.file.filename if using multer
+        filename: req.file.filename,
+      };
+    }
+
+    await course.save();
+    req.flash("success", "Course created successfully!");
+    res.redirect("/courses"); // adjust redirect as needed
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Something went wrong!");
+    res.redirect("/courses/new");
+  }
+};
+
+// Render Edit Course Form
+module.exports.renderEditCourseForm = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findById(id);
+    if (!course) {
+      req.flash("error", "Course not found");
+      return res.redirect("/courses");
+    }
+    res.render("rootshield/editcourse.ejs", { course });
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Something went wrong!");
+    res.redirect("/courses");
+  }
+};
+
+// Handle Edit Course Submission
+module.exports.updateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const courseData = req.body;
+
+    // If new image uploaded
+    if (req.file) {
+      courseData.image = {
+        url: req.file.path, // or req.file.location if using cloudinary
+        filename: req.file.filename,
+      };
+    }
+
+    // Handle checkboxes
+    courseData.isActive = req.body.isActive === "on";
+    courseData.isPopular = req.body.isPopular === "on";
+    courseData.addInHomePage = req.body.addInHomePage === "on";
+
+    await Course.findByIdAndUpdate(id, courseData, { new: true });
+
+    req.flash("success", "Course updated successfully");
+    res.redirect("/courses");
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Could not update course");
+    res.redirect("/courses");
+  }
+};
+
+// Toggle Popular
+module.exports.togglePopular = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findById(id);
+    if (!course) {
+      req.flash("error", "Course not found");
+      return res.redirect("/courses");
+    }
+
+    course.isPopular = !course.isPopular;
+    await course.save();
+
+    req.flash(
+      "success",
+      `Course "${course.title}" is now ${course.isPopular ? "Popular" : "Not Popular"}`,
+    );
+    res.redirect("/courses");
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Could not update course popularity");
+    res.redirect("/courses");
+  }
+};
+
+// Delete Course
+module.exports.deleteCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findByIdAndDelete(id);
+
+    if (!course) {
+      req.flash("error", "Course not found");
+      return res.redirect("/courses");
+    }
+
+    req.flash("success", `Course "${course.title}" deleted successfully`);
+    res.redirect("/courses");
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Could not delete course");
+    res.redirect("/courses");
+  }
+};
+
+// Toggle Active (PATCH)
+module.exports.toggleActive = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findById(id);
+
+    if (!course) {
+      req.flash("error", "Course not found");
+      return res.redirect("/courses");
+    }
+
+    // Flip the isActive boolean
+    course.isActive = !course.isActive;
+    await course.save();
+
+    req.flash(
+      "success",
+      `Course "${course.title}" has been ${course.isActive ? "activated" : "deactivated"}`,
+    );
+    res.redirect("/courses");
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Could not update course status");
+    res.redirect("/courses");
+  }
 };

@@ -29,7 +29,7 @@ module.exports.isOwner = async (req, res, next) => {
 };
 
 module.exports.isAdmin = (req, res, next) => {
-  if (req.user.role !== "ADMIN") {
+  if (req.user.role !== "admin") {
     req.flash("error", "You do not have permission to access this page.");
     return res.redirect("/");
   }
@@ -55,23 +55,6 @@ module.exports.isVerified = async (req, res, next) => {
   }
 
   if (!user.isVerified) {
-    req.flash("error", "Please verify your email first.");
-    return res.redirect(`/verify-email?email=${email}`);
-  }
-
-  next();
-};
-
-module.exports.isVerified = async (req, res, next) => {
-  const { email } = req.body; // 👍 extract only email
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    req.flash("error", "User not found.");
-    return res.redirect("/login");
-  }
-
-  if (!user.isvalid) {
     req.flash("error", "Please verify your email first.");
     return res.redirect(`/verify-email?email=${email}`);
   }

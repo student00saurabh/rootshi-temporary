@@ -40,16 +40,16 @@
                     <!-- Stats -->
                     <div class="mt-12 grid grid-cols-3 gap-6">
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2">5,000+</div>
+                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2"><%= totalUsers %></div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Active Students</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2">50+</div>
+                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2"><%= totalInstructors %></div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Expert Instructors</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2">95%</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Job Placement</div>
+                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2"><%= totalCources %></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Available Cources</div>
                         </div>
                     </div>
                 </div>
@@ -74,8 +74,8 @@
                                     <span class="ml-1">4.9</span>
                                 </span>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Ethical Hacking Mastery</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Learn penetration testing and security assessment</p>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2"><%= popularCourse.title %></h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4"><%= popularCourse.shortDescription %></p>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-4">
                                     <div class="flex items-center">
@@ -83,12 +83,12 @@
                                             AK
                                         </div>
                                         <div class="ml-2">
-                                            <p class="text-xs text-gray-700 dark:text-gray-300">Alex Kumar</p>
+                                            <p class="text-xs text-gray-700 dark:text-gray-300"><%= popularCourse.teacher.name %></p>
                                             <p class="text-xs text-gray-500 dark:text-gray-500">Security Expert</p>
                                         </div>
                                     </div>
                                 </div>
-                                <span class="text-cyan-600 dark:text-cyan-300 font-bold">₹12,999</span>
+                                <span class="text-cyan-600 dark:text-cyan-300 font-bold"><%= popularCourse.actualPrice %></span>
                             </div>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
     </section>
 
     <!-- Featured Courses Section -->
-    <section class="py-20 bg-white dark:bg-gray-900/50">
+    <section class="py-10 bg-white dark:bg-gray-900/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="inline-block px-4 py-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 rounded-full text-sm font-semibold mb-4">
@@ -112,23 +112,31 @@
                 </p>
             </div>
 
+            
             <!-- Courses Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Course 1 -->
+
+             <% cources.forEach(course => { %>
                 <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-cyan-500/30 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                     <div class="mb-4 relative overflow-hidden rounded-xl">
-                        <div class="aspect-video bg-gradient-to-r from-blue-600/20 to-cyan-500/20 rounded-xl"></div>
+                        <div class="relative aspect-video bg-gradient-to-r from-blue-600/20 to-cyan-500/20 rounded-xl overflow-hidden">
+                            <img
+                                src="<%= course.image.url %>"
+                                alt="<%= course.title %>"
+                                class="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </div>
                         <div class="absolute top-4 left-4">
-                            <span class="px-3 py-1 bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 text-xs font-semibold rounded-full">
-                                CYBERSECURITY
+                            <span class="px-3 py-1 bg-cyan-500 text-cyan-600 dark:text-cyan-900 text-xs font-semibold rounded-full">
+                                <%= course.courceType %>
                             </span>
                         </div>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                        Network Security Fundamentals
+                        <%= course.title %>
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">
-                        Master network security principles, firewalls, VPNs, and intrusion detection systems.
+                        <%= course.shortDescription %>
                     </p>
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
@@ -136,13 +144,13 @@
                                 <span class="text-sm font-bold">MK</span>
                             </div>
                             <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">Maya Sharma</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white"><%= course.teacher.name %></p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">Security Architect</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-cyan-600 dark:text-cyan-300 font-bold text-lg">₹9,999</div>
-                            <div class="text-gray-500 dark:text-gray-500 text-sm line-through">₹14,999</div>
+                            <div class="text-cyan-600 dark:text-cyan-300 font-bold text-lg">₹ <%= course.actualPrice %></div>
+                            <div class="text-gray-500 dark:text-gray-500 text-sm line-through">₹ <%= course.price %></div>
                         </div>
                     </div>
                     <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -150,7 +158,7 @@
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            42 Hours
+                            <%= course.duration %> Hours
                         </div>
                         <div class="flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,102 +167,17 @@
                             1,245 Students
                         </div>
                     </div>
-                </div>
+                    <button
+                        onclick="openEnrollModal('<%= course._id %>', `<%= course.actualPrice %>`)"
+                        class="block w-full px-6 py-3 rounded-xl
+                            bg-gradient-to-r from-cyan-500 to-blue-600
+                            text-white font-semibold">
+                            Enroll Now
+                    </button>
 
-                <!-- Course 2 -->
-                <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-cyan-500/30 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                    <div class="mb-4 relative overflow-hidden rounded-xl">
-                        <div class="aspect-video bg-gradient-to-r from-purple-600/20 to-pink-500/20 rounded-xl"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="px-3 py-1 bg-purple-500/20 text-purple-600 dark:text-purple-300 text-xs font-semibold rounded-full">
-                                WEB DEV
-                            </span>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                        Full Stack Development
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">
-                        Build complete web applications with React, Node.js, and modern databases.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white">
-                                <span class="text-sm font-bold">RJ</span>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">Rajeev Joshi</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Senior Developer</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-cyan-600 dark:text-cyan-300 font-bold text-lg">₹14,999</div>
-                            <div class="text-gray-500 dark:text-gray-500 text-sm line-through">₹19,999</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            68 Hours
-                        </div>
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            2,845 Students
-                        </div>
-                    </div>
                 </div>
-
-                <!-- Course 3 -->
-                <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-cyan-500/30 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                    <div class="mb-4 relative overflow-hidden rounded-xl">
-                        <div class="aspect-video bg-gradient-to-r from-red-600/20 to-orange-500/20 rounded-xl"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="px-3 py-1 bg-red-500/20 text-red-600 dark:text-red-300 text-xs font-semibold rounded-full">
-                                ADVANCED
-                            </span>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                        Penetration Testing Pro
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4">
-                        Advanced techniques for security assessment, vulnerability exploitation, and reporting.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center text-white">
-                                <span class="text-sm font-bold">SP</span>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">Suresh Patel</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Ethical Hacker</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-cyan-600 dark:text-cyan-300 font-bold text-lg">₹19,999</div>
-                            <div class="text-gray-500 dark:text-gray-500 text-sm">Certification Included</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            56 Hours
-                        </div>
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            856 Students
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <% }) %>
+            </div>   
 
             <div class="text-center mt-12">
                 <a href="/courses" class="inline-flex items-center px-6 py-3 border-2 border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-semibold rounded-xl hover:bg-cyan-50 dark:hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300">
@@ -267,6 +190,336 @@
         </div>
     </section>
 
+
+
+   <!-- certifications -->
+<section class="py-10 bg-white dark:bg-gray-900/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800">
+                Industry Recognized Certifications
+            </h2>
+            <p class="text-gray-600 mt-3">
+                Learn, prepare, and enroll in globally trusted certifications
+            </p>
+        </div>
+
+        <!-- Carousel Container -->
+        <div class="relative">
+
+            <!-- Navigation Buttons -->
+            <button id="prevBtn"
+                class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 z-20 w-10 h-10 md:w-12 md:h-12 bg-white shadow-lg rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-50 hover:scale-110 active:scale-95 transition-all duration-200">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <button id="nextBtn"
+                class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 z-20 w-10 h-10 md:w-12 md:h-12 bg-white shadow-lg rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-50 hover:scale-110 active:scale-95 transition-all duration-200">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <!-- Carousel Track Container -->
+            <div class="overflow-hidden px-2">
+                <div id="carousel" class="flex transition-transform duration-700 ease-in-out">
+                    <!-- Cards will be duplicated here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Progress Dots -->
+            <div id="progressDots" class="flex justify-center gap-2 mt-8">
+                <!-- Dots will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Certification data with working placeholder images
+const certifications = [
+    {
+        id: 1,
+        title: "eJPT",
+        issuer: "INE Security",
+        difficulty: "Beginner",
+        duration: "8–10 Weeks",
+        difficultyColor: "bg-blue-50 text-blue-700",
+        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&h=300&fit=crop&auto=format",
+        alt: "eJPT Certification"
+    },
+    {
+        id: 2,
+        title: "AWS SAA",
+        issuer: "Amazon Web Services",
+        difficulty: "Intermediate",
+        duration: "10–12 Weeks",
+        difficultyColor: "bg-yellow-50 text-yellow-700",
+        image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop&auto=format",
+        alt: "AWS Solutions Architect Associate"
+    },
+    {
+        id: 3,
+        title: "CEH",
+        issuer: "EC-Council",
+        difficulty: "Advanced",
+        duration: "12–14 Weeks",
+        difficultyColor: "bg-red-50 text-red-700",
+        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w-400&h=300&fit=crop&auto=format",
+        alt: "Certified Ethical Hacker"
+    },
+    {
+        id: 4,
+        title: "Security+",
+        issuer: "CompTIA",
+        difficulty: "Beginner",
+        duration: "6–8 Weeks",
+        difficultyColor: "bg-blue-50 text-blue-700",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop&auto=format",
+        alt: "CompTIA Security+"
+    },
+    {
+        id: 5,
+        title: "CKA",
+        issuer: "CNCF",
+        difficulty: "Intermediate",
+        duration: "8–10 Weeks",
+        difficultyColor: "bg-yellow-50 text-yellow-700",
+        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&auto=format",
+        alt: "Certified Kubernetes Administrator"
+    },
+    {
+        id: 6,
+        title: "OSCP",
+        issuer: "Offensive Security",
+        difficulty: "Advanced",
+        duration: "16–20 Weeks",
+        difficultyColor: "bg-red-50 text-red-700",
+        image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop&auto=format",
+        alt: "Offensive Security Certified Professional"
+    }
+];
+
+// DOM elements
+const carousel = document.getElementById("carousel");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const progressDots = document.getElementById("progressDots");
+
+// State variables
+let currentIndex = 0;
+let cardWidth = 0;
+let isTransitioning = false;
+let autoScrollInterval;
+let totalCards = certifications.length;
+
+// Initialize carousel
+function initCarousel() {
+    // Clear existing content
+    carousel.innerHTML = '';
+    progressDots.innerHTML = '';
+    
+    // Calculate card width based on viewport
+    updateCardWidth();
+    
+    // Create and append certification cards
+    certifications.forEach((cert, index) => {
+        // Card container
+        const card = document.createElement('div');
+        card.className = 'flex-shrink-0 px-3 transition-all duration-300 hover:scale-[1.02]';
+        card.style.width = `${cardWidth}px`;
+        
+        // Card content
+        card.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-full p-6 text-center flex flex-col">
+                <div class="h-40 mb-4 overflow-hidden rounded-lg">
+                    <img src="${cert.image}" alt="${cert.alt}" 
+                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                </div>
+                <h3 class="font-bold text-xl text-gray-800 mb-1">${cert.title}</h3>
+                <p class="text-blue-600 text-sm mb-4 font-medium">${cert.issuer}</p>
+                <div class="flex justify-center gap-2 flex-wrap mb-6 text-xs">
+                    <span class="px-3 py-1.5 ${cert.difficultyColor} rounded-full font-medium">${cert.difficulty}</span>
+                    <span class="px-3 py-1.5 bg-green-50 text-green-700 rounded-full font-medium">${cert.duration}</span>
+                </div>
+                <div class="mt-auto space-y-3">
+                    <button class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] transition-all duration-200 shadow-md hover:shadow-lg">
+                        Enroll Now
+                    </button>
+                    <button class="w-full py-3 rounded-xl border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-50 active:scale-[0.98] transition-all duration-200">
+                        View Details
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        carousel.appendChild(card);
+        
+        // Create progress dot
+        const dot = document.createElement('button');
+        dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${index === 0 ? 'bg-blue-600 scale-125' : 'bg-gray-300 hover:bg-gray-400'}`;
+        dot.dataset.index = index;
+        dot.addEventListener('click', () => goToSlide(index));
+        progressDots.appendChild(dot);
+    });
+    
+    // Start auto-scroll
+    startAutoScroll();
+}
+
+// Update card width based on screen size
+function updateCardWidth() {
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 1280) {
+        cardWidth = screenWidth / 4.2; // 4 cards on xl screens
+    } else if (screenWidth >= 1024) {
+        cardWidth = screenWidth / 3.2; // 3 cards on lg screens
+    } else if (screenWidth >= 640) {
+        cardWidth = screenWidth / 2.1; // 2 cards on sm screens
+    } else {
+        cardWidth = screenWidth * 0.85; // 1 card on mobile with padding
+    }
+}
+
+// Move carousel to specific slide
+function goToSlide(index) {
+    if (isTransitioning) return;
+    
+    isTransitioning = true;
+    currentIndex = index;
+    
+    // Update carousel position
+    carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+    
+    // Update active dot
+    document.querySelectorAll('#progressDots button').forEach((dot, i) => {
+        dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? 'bg-blue-600 scale-125' : 'bg-gray-300 hover:bg-gray-400'}`;
+    });
+    
+    // Reset auto-scroll timer
+    resetAutoScroll();
+    
+    // Allow next transition after animation completes
+    setTimeout(() => {
+        isTransitioning = false;
+    }, 700);
+}
+
+// Next slide function
+function nextSlide() {
+    const nextIndex = (currentIndex + 1) % totalCards;
+    goToSlide(nextIndex);
+}
+
+// Previous slide function
+function prevSlide() {
+    const prevIndex = (currentIndex - 1 + totalCards) % totalCards;
+    goToSlide(prevIndex);
+}
+
+// Start auto-scroll
+function startAutoScroll() {
+    autoScrollInterval = setInterval(nextSlide, 5000);
+}
+
+// Reset auto-scroll timer
+function resetAutoScroll() {
+    clearInterval(autoScrollInterval);
+    startAutoScroll();
+}
+
+// Event Listeners
+prevBtn.addEventListener('click', () => {
+    prevSlide();
+});
+
+nextBtn.addEventListener('click', () => {
+    nextSlide();
+});
+
+// Pause auto-scroll on hover
+carousel.addEventListener('mouseenter', () => {
+    clearInterval(autoScrollInterval);
+});
+
+carousel.addEventListener('mouseleave', () => {
+    startAutoScroll();
+});
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    updateCardWidth();
+    
+    // Update all card widths
+    document.querySelectorAll('#carousel > div').forEach(card => {
+        card.style.width = `${cardWidth}px`;
+    });
+    
+    // Move to current index with new width
+    carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+});
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', initCarousel);
+
+// Handle touch events for mobile swipe
+let touchStartX = 0;
+let touchEndX = 0;
+
+carousel.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+carousel.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    
+    if (touchEndX < touchStartX - swipeThreshold) {
+        // Swipe left - next slide
+        nextSlide();
+    }
+    
+    if (touchEndX > touchStartX + swipeThreshold) {
+        // Swipe right - previous slide
+        prevSlide();
+    }
+}
+</script>
+
+<style>
+/* Custom scrollbar for the carousel container */
+#carousel::-webkit-scrollbar {
+    display: none;
+}
+
+/* Smooth scrolling for the entire page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Improved focus styles for accessibility */
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Fade-in animation for carousel items */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#carousel > div {
+    animation: fadeIn 0.5s ease-out;
+}
+</style>
+
+
+    
     <!-- Why Choose Us Section -->
     <section class="py-20 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -702,3 +955,107 @@
         }
     });
 </script>
+
+<div id="enrollModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-lg p-6 relative">
+
+    <!-- Close -->
+    <button onclick="closeEnrollModal()" class="absolute top-3 right-3 text-gray-500">✕</button>
+
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      Enroll in Course
+    </h2>
+
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+  You can either fill out the form to enroll in this course,  
+  or contact us via WhatsApp or the contact page for enrollment assistance.  
+  If you have any doubts or questions, feel free to reach out to us.
+</p>
+
+    <!-- FORM -->
+    <form method="POST" action="/enroll" class="space-y-4">
+
+      <input type="hidden" name="courseId" id="courseId">
+      <input type="hidden" name="paidPrice" id="paidPrice">
+
+      <!-- Name -->
+      <input
+        type="text"
+        name="name"
+        value="<%= currUser ? currUser.name : '' %>"
+        required
+        placeholder="Your Name"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      />
+
+      <!-- Email -->
+      <input
+        type="email"
+        name="email"
+        value="<%= currUser ? currUser.email : '' %>"
+        required
+        placeholder="Email Address"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      />
+
+      <!-- Mobile -->
+      <input
+        type="tel"
+        name="mobile"
+        value="<%= currUser && currUser.mobile ? currUser.mobile : '' %>"
+        required
+        placeholder="Mobile Number"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      />
+
+      <!-- Description -->
+      <textarea
+        name="description"
+        placeholder="Any doubt or message (optional)"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      ></textarea>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold">
+        Enroll Now
+      </button>
+    </form>
+
+    <!-- CONTACT OPTIONS -->
+    <div class="mt-4 flex justify-between text-sm">
+      <a
+        href="https://wa.me/91XXXXXXXXXX"
+        target="_blank"
+        class="text-green-600 font-semibold"
+      >
+        WhatsApp
+      </a>
+
+      <a
+        href="/contact"
+        class="text-cyan-600 font-semibold"
+      >
+        Contact Us
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+  function openEnrollModal(courseId, price) {
+    document.getElementById("courseId").value = courseId;
+    document.getElementById("paidPrice").value = price;
+    document.getElementById("enrollModal").classList.remove("hidden");
+    document.getElementById("enrollModal").classList.add("flex");
+  }
+
+  function closeEnrollModal() {
+    document.getElementById("enrollModal").classList.add("hidden");
+  }
+</script>
+
+

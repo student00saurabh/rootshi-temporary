@@ -1,3 +1,4 @@
+const { boolean } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -6,6 +7,36 @@ const courcesSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+
+  students: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      enrolledAt: {
+        type: Date,
+        default: Date.now,
+      },
+      paidPrice: {
+        type: Number,
+        required: true,
+      },
+      description: {
+        type: String,
+      },
+      isSeen: {
+        type: Boolean,
+        default: false,
+      },
+    },
+  ],
+  image: {
+    url: String,
+    filename: String,
+  },
+
   title: {
     type: String,
     required: true,
@@ -14,10 +45,24 @@ const courcesSchema = new Schema({
     type: String,
     required: true,
   },
+  discription: {
+    type: String,
+  },
+  tableOfContent: [
+    {
+      tile: {
+        type: String,
+      },
+      duration: {
+        type: Number,
+      },
+    },
+  ],
   price: {
     type: Number,
     required: true,
   },
+
   actualPrice: {
     type: Number,
     required: true,
@@ -36,18 +81,23 @@ const courcesSchema = new Schema({
     ],
     required: true,
   },
-
-  message: {
-    type: String,
+  duration: {
+    type: Number,
   },
-  msgDate: {
+  lounchedDate: {
     type: Date,
-    required: true,
-    default: Date.now,
   },
-  gps: {
-    latitude: Number,
-    longitude: Number,
+  addInHomePage: {
+    type: Boolean,
+    default: false,
+  },
+  isPopular: {
+    type: Boolean,
+    default: false,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
   },
 });
 

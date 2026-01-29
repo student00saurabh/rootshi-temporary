@@ -26,6 +26,7 @@ const userRouter = require("./routes/user.js");
 const resetRout = require("./routes/authRoutes.js");
 const user = require("./models/user.js");
 const adminRouter = require("./routes/admin.js");
+const othersRouter = require("./routes/others.js");
 
 const dbUrl = process.env.ATLUSDB_URL;
 
@@ -43,6 +44,7 @@ async function main() {
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
@@ -136,14 +138,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", async (req, res, next) => {
-  if (!req.user) {
-    res.render("rootshield/home.ejs", { user: null });
-  } else {
-    next();
-  }
-});
-
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
@@ -164,6 +158,7 @@ app.get(
 app.use("/", userRouter);
 app.use("/", homeRouter);
 app.use("/", resetRout);
+app.use("/", othersRouter);
 app.use("/admin", adminRouter);
 
 app.all(/.*/, (req, res, next) => {

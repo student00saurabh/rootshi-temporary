@@ -622,7 +622,7 @@ module.exports.renderLoginForm = (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-  req.flash("success", "Welcome back to TheCubicals!");
+  req.flash("success", "Welcome back to Root-Shield!");
   const redirectUrl = res.locals.redirectUrl || "/";
   res.redirect(redirectUrl);
 };
@@ -663,7 +663,7 @@ module.exports.verifyEmail = async (req, res) => {
       return res.redirect("/signup");
     }
 
-    if (user.isvalid) {
+    if (user.isVerified) {
       req.flash("info", "Your email is already verified. Please log in.");
       return res.redirect("/login");
     }
@@ -690,7 +690,7 @@ module.exports.verifyEmail = async (req, res) => {
     }
 
     // Mark email as verified
-    user.isvalid = true;
+    user.isVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();

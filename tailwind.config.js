@@ -2,9 +2,9 @@
 module.exports = {
   darkMode: "class",
   content: [
-    ".//views/**/*.ejs", // scan all ejs files inside views folder
-    "./public/**/*.js", // scan js files
-    "./*.html", // scan html at root (if index.html exists)
+    "./views/**/*.ejs",       // watch all EJS files in views
+    "./public/**/*.html",     // if you have HTML files
+    "./public/js/**/*.js"     // if you use JS files with Tailwind classes
   ],
   theme: {
     extend: {},

@@ -1,0 +1,96 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="max-w-5xl mx-auto py-10 px-4">
+
+    <h1 class="text-3xl font-bold mb-6">Create New Course</h1>
+
+    <form action="/courses" method="POST" enctype="multipart/form-data" class="space-y-6 bg-gray-800/30 p-6 rounded-lg shadow-lg">
+
+        <!-- Title -->
+        <div>
+            <label for="title" class="block mb-2 font-semibold">Course Title</label>
+            <input type="text" id="title" name="title" required
+                class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+        </div>
+
+        <!-- Short Description -->
+        <div>
+            <label for="shortDescription" class="block mb-2 font-semibold">Short Description</label>
+            <textarea id="shortDescription" name="shortDescription" required rows="3"
+                class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+        </div>
+
+        <!-- Full Description -->
+        <div>
+            <label for="description" class="block mb-2 font-semibold">Description</label>
+            <textarea id="description" name="description" rows="5"
+                class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+        </div>
+
+        <!-- Price -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="price" class="block mb-2 font-semibold">Original Price</label>
+                <input type="number" id="price" name="price" required
+                    class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            </div>
+            <div>
+                <label for="actualPrice" class="block mb-2 font-semibold">Discounted Price</label>
+                <input type="number" id="actualPrice" name="actualPrice" required
+                    class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            </div>
+        </div>
+
+        <!-- Course Type -->
+        <div>
+            <label for="courceType" class="block mb-2 font-semibold">Course Type</label>
+            <select id="courceType" name="courceType" required
+                class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="">Select Type</option>
+                <option value="CYBERSECURITY">CYBERSECURITY</option>
+                <option value="WEB DEV">WEB DEV</option>
+                <option value="ADVANCED">ADVANCED</option>
+                <option value="MACHINE LEARNING">MACHINE LEARNING</option>
+                <option value="ETHICAL HACKING">ETHICAL HACKING</option>
+                <option value="DATA SCIENCE">DATA SCIENCE</option>
+                <option value="ARTIFICIAL INTELLIGENCE">ARTIFICIAL INTELLIGENCE</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <!-- Duration & Launch Date -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="duration" class="block mb-2 font-semibold">Duration (Hours)</label>
+                <input type="number" id="duration" name="duration"
+                    class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            </div>
+            <div>
+                <label for="lounchedDate" class="block mb-2 font-semibold">Launch Date</label>
+                <input type="date" id="lounchedDate" name="lounchedDate"
+                    class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            </div>
+        </div>
+
+        <!-- Add in Home Page -->
+        <div class="flex items-center space-x-2">
+            <input type="checkbox" id="addInHomePage" name="addInHomePage"
+                class="w-5 h-5 text-cyan-500 focus:ring-cyan-500 rounded">
+            <label for="addInHomePage" class="font-semibold">Add in Home Page</label>
+        </div>
+
+        <!-- Image Upload -->
+        <div>
+            <label for="image" class="block mb-2 font-semibold">Course Image</label>
+            <input type="file" id="image" name="image" accept="image/*"
+                class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 py-3 px-4 rounded-lg font-bold text-white hover:from-cyan-600 hover:to-blue-700 transition-all">
+            Create Course
+        </button>
+
+    </form>
+</div>

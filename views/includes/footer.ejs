@@ -300,32 +300,53 @@
 
 <!-- JavaScript for newsletter and current year -->
 <script>
-    // Set current year in copyright
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-    
-    // Newsletter form submission
+
     const newsletterForm = document.getElementById('newsletterForm');
     const successMessage = document.getElementById('successMessage');
-    
+
     newsletterForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const formData = new FormData(newsletterForm);
-        const email = formData.get('email');
-        
-        // Here you would typically send this to your backend
-        // For now, we'll simulate a successful subscription
-        console.log('Subscribing email:', email);
-        
-        // Show success message
-        successMessage.classList.remove('hidden');
-        
-        // Reset form
-        newsletterForm.reset();
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-            successMessage.classList.add('hidden');
-        }, 5000);
+
+        const emailInput = newsletterForm.querySelector('input[name="email"]');
+        const email = emailInput.value.trim();
+        const submitBtn = newsletterForm.querySelector('button[type="submit"]');
+
+        if (!email) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "Subscribing...";
+
+        try {
+            const res = await fetch("/subscribe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Subscription failed");
+            }
+
+            // Show success
+            successMessage.querySelector("p").textContent = data.message;
+            successMessage.classList.remove("hidden");
+
+            newsletterForm.reset();
+
+            setTimeout(() => {
+                successMessage.classList.add("hidden");
+            }, 5000);
+
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "Subscribe Now";
+        }
     });
 </script>
