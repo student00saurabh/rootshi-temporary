@@ -27,6 +27,7 @@ const resetRout = require("./routes/authRoutes.js");
 const user = require("./models/user.js");
 const adminRouter = require("./routes/admin.js");
 const othersRouter = require("./routes/others.js");
+const blogRouter = require("./routes/blog.js");
 
 const dbUrl = process.env.ATLUSDB_URL;
 
@@ -133,6 +134,9 @@ passport.use(
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.info = req.flash("info");
+  res.locals.warning = req.flash("warning");
+  res.locals.primary = req.flash("primary");
   res.locals.currUser = req.user || null;
   res.locals.currentPath = req.path;
   next();
@@ -159,6 +163,7 @@ app.use("/", userRouter);
 app.use("/", homeRouter);
 app.use("/", resetRout);
 app.use("/", othersRouter);
+app.use("/blogs", blogRouter);
 app.use("/admin", adminRouter);
 
 app.all(/.*/, (req, res, next) => {

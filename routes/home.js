@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const homeController = require("../controllers/home.js");
-const { isLoggedIn, isAdmin } = require("../middleware");
+const { isLoggedIn, isAdmin, saveRedirectUrl } = require("../middleware");
 const multer = require("multer");
 const { storage } = require("../Cloudconfig.js");
 const upload = multer({ storage });
@@ -54,5 +54,12 @@ router.patch(
   isAdmin,
   homeController.togglePopular,
 );
+
+router
+  .route("/enroll")
+  .get(homeController.enrollCourseForm)
+  .post(isLoggedIn, saveRedirectUrl, homeController.enrollCourse);
+
+router.post("/enroll/:courseId", isLoggedIn, homeController.enrollInNewCource);
 
 module.exports = router;

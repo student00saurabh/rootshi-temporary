@@ -1,7 +1,7 @@
 {
-  "name": "zoopito",
+  "name": "rootshield",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon --legacy-watch app.js",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@getbrevo/brevo": "^3.0.1",
     "axios": "^1.13.2",
+    "bad-words": "^3.0.4",
     "bcrypt": "^6.0.0",
     "bravo": "^0.1.5",
     "cloudinary": "^1.41.0",
@@ -25,6 +26,7 @@
     "ejs-mate": "^4.0.0",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
+    "html-to-text": "^9.0.5",
     "joi": "^18.0.2",
     "method-override": "^3.0.0",
     "mongoose": "^8.15.1",
@@ -35,7 +37,10 @@
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^8.0.0"
+    "passport-local-mongoose": "^8.0.0",
+    "pdfkit": "^0.17.2",
+    "pdfmake": "^0.3.3",
+    "sanitize-html": "^2.17.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.22",

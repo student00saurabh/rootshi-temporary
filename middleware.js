@@ -1,6 +1,6 @@
 const ExpressError = require("./utils/ExpressError.js");
 const User = require("./models/user");
-const { linkSchema } = require("./schema.js");
+const { blogsSchema } = require("./schema.js");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -60,4 +60,14 @@ module.exports.isVerified = async (req, res, next) => {
   }
 
   next();
+};
+
+module.exports.validateBlog = (req, res, next) => {
+  let { error } = blogsSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
 };

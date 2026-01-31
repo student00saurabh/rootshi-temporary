@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const Servise = require("../models/services");
 const Course = require("../models/cources");
+const Blog = require("../models/blog");
+const { all } = require("axios");
 
 module.exports.homePage = async (req, res, next) => {
   if (!req.user) {
@@ -12,12 +14,15 @@ module.exports.homePage = async (req, res, next) => {
       "teacher",
     );
 
+    const blogs = await Blog.find().populate("author").sort({ createdAt: -1 });
+
     res.render("rootshield/home.ejs", {
       totalUsers,
       totalInstructors,
       totalCources,
       cources,
       popularCourse,
+      blogs,
     });
   } else {
     next();
@@ -35,12 +40,15 @@ module.exports.index = async (req, res) => {
     const popularCourse = await Course.findOne({ isPopular: true }).populate(
       "teacher",
     );
+    const blogs = await Blog.find().populate("author").sort({ createdAt: -1 });
+
     res.render("rootshield/home.ejs", {
       totalUsers,
       totalInstructors,
       totalCources,
       cources,
       popularCourse,
+      blogs,
     });
   } catch (error) {
     console.log(error);
@@ -292,5 +300,142 @@ module.exports.toggleActive = async (req, res) => {
     console.log(error);
     req.flash("error", "Could not update course status");
     res.redirect("/courses");
+  }
+};
+
+module.exports.enrollCourseForm = async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.render("rootshield/enroll.ejs", { courses });
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Please try again");
+    res.redirect("/");
+  }
+};
+
+module.exports.enrollInNewCource = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { description, paidPrice } = req.body;
+
+    // User must be logged in
+    if (!req.user) {
+      req.flash("error", "Please login to enroll in a course");
+      return res.redirect("/login");
+    }
+
+    // Find user
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      req.flash("error", "User not found. Please login again.");
+      return res.redirect("/login");
+    }
+
+    // Check if user is blocked
+    if (user.isBlocked) {
+      req.flash(
+        "error",
+        "Your account has been blocked. Please contact support.",
+      );
+      return res.redirect("/contact");
+    }
+
+    // Find course
+    const course = await Course.findById(courseId);
+    if (!course) {
+      req.flash("error", "Course not found");
+      return res.redirect("/enroll");
+    }
+
+    // Check if course is active
+    if (!course.isActive) {
+      req.flash("error", "This course is currently unavailable");
+      return res.redirect("/enroll");
+    }
+
+    // Check already enrolled
+    const alreadyEnrolled = course.students.some(
+      (student) => student.user.toString() === user._id.toString(),
+    );
+
+    if (alreadyEnrolled) {
+      req.flash("error", "You are already enrolled in this course");
+      return res.redirect("/enroll");
+    }
+
+    // Add student to course
+    course.students.push({
+      user: user._id,
+      paidPrice: paidPrice ? Number(paidPrice) : 0,
+      description: description || "",
+      enrolledAt: new Date(),
+      isSeen: false,
+    });
+
+    await course.save();
+
+    req.flash("success", `Successfully enrolled in "${course.title}"`);
+    return res.redirect("/course");
+  } catch (error) {
+    console.error("Enrollment error:", error);
+    req.flash("error", "Enrollment failed. Please try again.");
+    return res.redirect("/enroll");
+  }
+};
+
+module.exports.enrollCourse = async (req, res) => {
+  const redirectUrl = res.locals.redirectUrl || "/";
+  try {
+    const { courseId, paidPrice, name, email, mobile, description } = req.body;
+
+    if (!courseId || !name || !email || !mobile) {
+      req.flash("error", "Please fill all required fields");
+      return res.redirect(redirectUrl);
+    }
+
+    const user = req.user;
+
+    // 🔹 Update user mobile if not exists
+    if (!user.mobile) {
+      user.mobile = mobile;
+      await user.save();
+    }
+
+    // 🔹 Find course
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      req.flash("error", "Course not found");
+      return res.redirect(redirectUrl);
+    }
+
+    // 🔹 Check already enrolled
+    const alreadyEnrolled = course.students.some(
+      (s) => s.user.toString() === user._id.toString(),
+    );
+
+    if (alreadyEnrolled) {
+      req.flash("info", "You are already enrolled in this course");
+      return res.redirect(redirectUrl);
+    }
+
+    // 🔹 Push student data
+    course.students.push({
+      user: user._id,
+      paidPrice: Number(paidPrice),
+      description: description || "",
+      enrolledAt: new Date(),
+      isSeen: false,
+    });
+
+    await course.save();
+
+    req.flash("success", "Enrollment successful 🎉");
+    return res.redirect(redirectUrl);
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "Something went wrong. Please try again");
+    return res.redirect(redirectUrl);
   }
 };

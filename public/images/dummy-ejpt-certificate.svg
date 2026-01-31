@@ -1,0 +1,13 @@
+<svg width="200" height="60" viewBox="0 0 200 60"
+	xmlns="http://www.w3.org/2000/svg">
+	<rect width="200" height="60" rx="8" fill="#eff6ff"/>
+	<rect x="15" y="12" width="170" height="36" rx="6" fill="#3b82f6"/>
+	<text x="100" y="32" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+        eJPT
+	</text>
+	<text x="100" y="50" text-anchor="middle" fill="#1e40af" font-family="Arial, sans-serif" font-size="11">
+        Junior Penetration Testing
+	</text>
+	<path d="M50 20 L55 15 L60 20 L60 25 L55 30 L50 25 Z" fill="white" opacity="0.7"/>
+	<path d="M140 20 L145 15 L150 20 L150 25 L145 30 L140 25 Z" fill="white" opacity="0.7"/>
+</svg>

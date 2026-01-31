@@ -23,6 +23,7 @@ const contactSchema = new Schema({
       "Technical Support",
       "Billing and Payments",
       "Partnership Opportunities",
+      "Service",
       "other",
     ],
     required: true,

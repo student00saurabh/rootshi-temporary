@@ -1,0 +1,435 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black py-8 px-4">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        Enroll in <span class="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">Your Future</span>
+      </h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        Choose from our premium courses and kickstart your learning journey today
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Course Selection Panel -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-lg">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Available Courses
+            </h2>
+            <span class="px-3 py-1 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300 rounded-full text-sm font-semibold">
+              <%= courses.length %> Courses
+            </span>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="relative mb-6">
+            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input 
+              type="text" 
+              id="courseSearch" 
+              placeholder="Search courses by name or category..." 
+              class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+            >
+          </div>
+
+          <!-- Courses Grid -->
+          <div id="coursesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2">
+            <% courses.forEach(course => { %>
+              <div 
+                class="course-card bg-gray-50 dark:bg-gray-800/70 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-5 cursor-pointer transition-all duration-300 hover:border-cyan-500 hover:shadow-lg hover:scale-[1.02] group"
+                data-course-id="<%= course._id %>"
+                data-course-title="<%= course.title %>"
+                data-course-price="<%= course.actualPrice %>"
+                data-course-type="<%= course.courceType %>"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white group-hover:text-cyan-600 transition-colors">
+                      <%= course.title %>
+                    </h3>
+                    <span class="inline-block px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium mt-2">
+                      <%= course.courceType %>
+                    </span>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                      ₹<%= course.actualPrice %>
+                    </div>
+                    <% if (course.price > course.actualPrice) { %>
+                      <div class="text-sm text-gray-500 dark:text-gray-400 line-through">
+                        ₹<%= course.price %>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+                
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                  <%= course.shortDescription %>
+                </p>
+                
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <div class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span><%= course.duration || 'N/A' %> hours</span>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="select-course-btn px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-cyan-500 hover:text-white transition-colors"
+                    data-course-id="<%= course._id %>"
+                  >
+                    Select Course
+                  </button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <!-- No Results Message (Hidden by default) -->
+          <div id="noResults" class="hidden text-center py-10">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No courses found</h3>
+            <p class="text-gray-500 dark:text-gray-500">Try adjusting your search criteria</p>
+          </div>
+        </div>
+
+        <!-- Contact Options -->
+        <div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl p-6 text-white">
+          <h3 class="text-xl font-bold mb-4">Need Assistance?</h3>
+          <p class="mb-6 text-cyan-100">Our team is here to help you choose the right course and answer all your questions.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a 
+              href="https://wa.me/91XXXXXXXXXX" 
+              target="_blank" 
+              class="flex items-center justify-center space-x-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 transition-all duration-300 group"
+            >
+              <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.76.982.998-3.677-.236-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.9 6.994c-.004 5.45-4.438 9.88-9.888 9.88m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411"/>
+                </svg>
+              </div>
+              <div>
+                <p class="font-semibold">WhatsApp Chat</p>
+                <p class="text-sm text-cyan-100">Quick response within minutes</p>
+              </div>
+            </a>
+            
+            <a 
+              href="/contact" 
+              class="flex items-center justify-center space-x-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 transition-all duration-300 group"
+            >
+              <div class="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="font-semibold">Email Support</p>
+                <p class="text-sm text-cyan-100">Detailed assistance via email</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enrollment Form Panel -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-6">
+          <div class="bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-lg">
+            <!-- Selected Course Info -->
+            <div id="selectedCourseInfo" class="mb-6 p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-xl border border-cyan-200 dark:border-cyan-800/50">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-gray-900 dark:text-white">Selected Course</h3>
+                <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div id="courseTitleDisplay" class="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                Select a course from the list
+              </div>
+              <div class="flex items-center justify-between">
+                <span id="courseTypeDisplay" class="text-sm text-gray-600 dark:text-gray-400">-</span>
+                <span id="coursePriceDisplay" class="text-2xl font-bold text-gray-900 dark:text-white">₹0</span>
+              </div>
+            </div>
+
+            <!-- Enrollment Form -->
+            <form id="enrollmentForm" method="POST" action="/enroll" class="space-y-4">
+              <input type="hidden" name="courseId" id="courseId">
+              <input type="hidden" name="paidPrice" id="paidPrice">
+
+              <div class="space-y-6">
+                <!-- Personal Information Section -->
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Personal Information
+                  </h3>
+                  
+                  <div class="space-y-4">
+                    <div class="group">
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value="<%= currUser ? currUser.name : '' %>"
+                        required
+                        placeholder="Enter your full name"
+                        class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="group">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value="<%= currUser ? currUser.email : '' %>"
+                          required
+                          placeholder="your@email.com"
+                          class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+
+                      <div class="group">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mobile Number</label>
+                        <input
+                          type="tel"
+                          name="mobile"
+                          value="<%= currUser && currUser.mobile ? currUser.mobile : '' %>"
+                          required
+                          placeholder="+91 1234567890"
+                          class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message Section -->
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                    Additional Information
+                  </h3>
+                  <div class="group">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Questions or Special Requirements</label>
+                    <textarea
+                      name="description"
+                      placeholder="Any questions about the course, schedule preferences, or special requirements..."
+                      rows="4"
+                      class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  id="submitBtn"
+                  disabled
+                  class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold text-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                  <span>Complete Enrollment</span>
+                </button>
+
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                  By enrolling, you agree to our 
+                  <a href="/terms" class="text-cyan-600 hover:text-cyan-700 dark:text-cyan-400">Terms of Service</a>
+                  and 
+                  <a href="/privacy" class="text-cyan-600 hover:text-cyan-700 dark:text-cyan-400">Privacy Policy</a>
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const courseCards = document.querySelectorAll('.course-card');
+  const courseSearch = document.getElementById('courseSearch');
+  const coursesGrid = document.getElementById('coursesGrid');
+  const noResults = document.getElementById('noResults');
+  const submitBtn = document.getElementById('submitBtn');
+  const enrollmentForm = document.getElementById('enrollmentForm');
+  
+  // Form fields
+  const courseIdInput = document.getElementById('courseId');
+  const paidPriceInput = document.getElementById('paidPrice');
+  
+  // Display elements
+  const courseTitleDisplay = document.getElementById('courseTitleDisplay');
+  const courseTypeDisplay = document.getElementById('courseTypeDisplay');
+  const coursePriceDisplay = document.getElementById('coursePriceDisplay');
+  const selectedCourseInfo = document.getElementById('selectedCourseInfo');
+
+  let selectedCourseId = null;
+
+  // Course selection functionality
+  courseCards.forEach(card => {
+    const selectBtn = card.querySelector('.select-course-btn');
+    
+    card.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('select-course-btn')) {
+        selectCourse(card);
+      }
+    });
+    
+    selectBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectCourse(card);
+    });
+  });
+
+  function selectCourse(card) {
+    // Remove selection from all cards
+    courseCards.forEach(c => c.classList.remove('border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-900/20'));
+    
+    // Add selection to clicked card
+    card.classList.add('border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-900/20');
+    
+    // Get course data
+    selectedCourseId = card.dataset.courseId;
+    const courseTitle = card.dataset.courseTitle;
+    const coursePrice = card.dataset.coursePrice;
+    const courseType = card.dataset.courseType;
+    
+    // Update form hidden fields
+    courseIdInput.value = selectedCourseId;
+    paidPriceInput.value = coursePrice;
+    
+    // Update display
+    courseTitleDisplay.textContent = courseTitle;
+    courseTypeDisplay.textContent = courseType;
+    coursePriceDisplay.textContent = `₹${coursePrice}`;
+    
+    // Enable submit button
+    submitBtn.disabled = false;
+    
+    // Update form action
+    enrollmentForm.action = `/enroll/${selectedCourseId}`;
+    
+    // Scroll to form on mobile
+    if (window.innerWidth < 768) {
+      document.querySelector('#enrollmentForm').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  // Course search functionality
+  courseSearch.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    let visibleCount = 0;
+    
+    courseCards.forEach(card => {
+      const title = card.dataset.courseTitle.toLowerCase();
+      const type = card.dataset.courseType.toLowerCase();
+      
+      if (title.includes(searchTerm) || type.includes(searchTerm)) {
+        card.style.display = 'block';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    
+    // Show/hide no results message
+    if (visibleCount === 0) {
+      noResults.classList.remove('hidden');
+      coursesGrid.classList.add('hidden');
+    } else {
+      noResults.classList.add('hidden');
+      coursesGrid.classList.remove('hidden');
+    }
+  });
+
+  // Form submission validation
+  enrollmentForm.addEventListener('submit', function(e) {
+    if (!selectedCourseId) {
+      e.preventDefault();
+      alert('Please select a course before submitting');
+      return;
+    }
+    
+    // Show loading state
+    submitBtn.innerHTML = `
+      <svg class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Processing...
+    `;
+    submitBtn.disabled = true;
+  });
+
+  // Auto-focus first course card
+  if (courseCards.length > 0) {
+    courseCards[0].classList.add('border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-900/20');
+  }
+});
+</script>
+
+<style>
+.course-card {
+  transition: all 0.3s ease;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+#coursesGrid::-webkit-scrollbar {
+  width: 6px;
+}
+
+#coursesGrid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+#coursesGrid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+#coursesGrid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.dark #coursesGrid::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark #coursesGrid::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark #coursesGrid::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+</style>
