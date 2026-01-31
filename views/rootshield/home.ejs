@@ -326,7 +326,7 @@
 const certificationLogos = [
   {
     name: "CEH – EC-Council",
-    logo: "p/images/dummy-ceh-certificate.svg"
+    logo: "/images/dummy-ceh-certificate.svg"
   },
   {
     name: "CompTIA Security+",
@@ -359,7 +359,7 @@ function initMarquee() {
     const div = document.createElement("div");
     div.className = "flex-shrink-0 text-center";
     div.innerHTML = `
-      <div class="w-44 h-24 bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex items-center justify-center">
+      <div class="w-54 h-24 bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex items-center justify-center">
         <img src="${c.logo}" alt="${c.name}" class="max-h-full object-contain">
       </div>
       <p class="text-sm mt-2 text-gray-600 dark:text-gray-400">${c.name}</p>
