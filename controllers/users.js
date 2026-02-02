@@ -1,5 +1,6 @@
 const { saveRedirectUrl } = require("../middleware.js");
 const User = require("../models/user.js");
+const Cources = require("../models/cources.js");
 const bcrypt = require("bcrypt");
 const brevo = require("@getbrevo/brevo");
 
@@ -489,7 +490,7 @@ async function sendWelcomeEmail(user) {
         
         <div class="message">
           <p>Congratulations! Your RootShield account has been successfully verified and activated.</p>
-          <p>You are now part of India's premier cybersecurity and web development education community. Get ready to enhance your skills with industry-recognized courses and certifications.</p>
+          <p>You are now part of India's premier cybersecurity and web development education community. Get ready to enhance your skills with industry-recognized Courcess and certifications.</p>
         </div>
         
         <div style="text-align: center;">
@@ -759,5 +760,315 @@ module.exports.resendOtp = async (req, res) => {
     console.error("❌ OTP resend error:", err);
     req.flash("error", "Unable to send verification code. Please try again.");
     res.redirect(`/verify-email?email=${req.query.email || ""}`);
+  }
+};
+
+// controllers/userController.js
+module.exports.profile = async (req, res) => {
+  try {
+    const id = req.user._id; // Assuming req.user is set by auth middleware
+
+    // Find user
+    const user = await User.findById(id);
+
+    // Find courses where user is enrolled - CORRECTED
+    const enrolledCourses = await Cources.find({
+      "students.user": id,
+    })
+      .populate("teacher", "name email")
+      .sort({ "students.enrolledAt": -1 })
+      .limit(6);
+
+    // If no courses found, use dummy data
+    let displayCourses = enrolledCourses;
+    if (!enrolledCourses || enrolledCourses.length === 0) {
+      displayCourses = [
+        {
+          _id: "demo1",
+          title: "Ethical Hacking Fundamentals",
+          shortDescription:
+            "Learn the basics of ethical hacking and penetration testing",
+          teacher: {
+            name: "John Doe",
+            email: "john@example.com",
+          },
+          image: {
+            url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop",
+          },
+          students: [
+            {
+              user: id,
+              paidPrice: 2999,
+              enrolledAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            },
+          ],
+          courceType: "ETHICAL HACKING",
+          price: 2999,
+        },
+        {
+          _id: "demo2",
+          title: "Web Development Bootcamp",
+          shortDescription: "Complete full-stack web development course",
+          teacher: {
+            name: "Jane Smith",
+            email: "jane@example.com",
+          },
+          image: {
+            url: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&h=300&fit=crop",
+          },
+          students: [
+            {
+              user: id,
+              paidPrice: 4999,
+              enrolledAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+            },
+          ],
+          courceType: "WEB DEV",
+          price: 4999,
+        },
+      ];
+    }
+
+    // Dummy taught courses for teachers
+    const taughtCourses =
+      user.role === "teacher"
+        ? [
+            {
+              _id: "64a1b2c3d4e5f67890123456",
+              title: "Advanced Cybersecurity",
+              shortDescription:
+                "Master advanced security concepts and techniques",
+              image: {
+                url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&h=300&fit=crop",
+              },
+              students: [{}, {}, {}],
+              isActive: true,
+              courceType: "CYBERSECURITY",
+            },
+          ]
+        : [];
+
+    // Dummy recent activity
+    const recentActivity = [
+      {
+        _id: "1",
+        action: "enrollment",
+        description: "Enrolled in 'Ethical Hacking Fundamentals' course",
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      },
+    ];
+
+    // Dummy certificates
+    const certificates = [
+      {
+        _id: "cert001",
+        course: {
+          title: "Introduction to Cybersecurity",
+        },
+        certificateId: "CERT-2024-001",
+        issuedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      },
+    ];
+
+    // Calculate stats
+    const totalEnrolled = displayCourses.length;
+    const totalPaid = displayCourses.reduce((sum, course) => {
+      const studentInfo = course.students?.find(
+        (s) =>
+          s.user?._id?.toString() === id.toString() ||
+          s.user?.toString() === id.toString(),
+      );
+      return sum + (studentInfo?.paidPrice || course.price || 0);
+    }, 0);
+
+    // Render the template with ALL required variables
+    res.render("users/profile.ejs", {
+      user,
+      enrolledCourses: displayCourses, // Make sure this is passed
+      taughtCourses,
+      totalEnrolled,
+      totalPaid,
+      recentActivity,
+      certificates,
+      moment: require("moment"),
+    });
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Something went wrong");
+    res.redirect("/");
+  }
+};
+module.exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { name, mobile, email } = req.body;
+
+    // Check if email is already taken by another user
+    if (email) {
+      const existingUser = await User.findOne({
+        email: email.toLowerCase(),
+        _id: { $ne: userId },
+      });
+
+      if (existingUser) {
+        req.flash("error", "Email already in use");
+        return res.redirect("/profile");
+      }
+    }
+
+    // Check if mobile is already taken by another user
+    if (mobile) {
+      const existingUser = await User.findOne({
+        mobile,
+        _id: { $ne: userId },
+      });
+
+      if (existingUser) {
+        req.flash("error", "Mobile number already in use");
+        return res.redirect("/profile");
+      }
+    }
+
+    // Update user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        name,
+        mobile,
+        email: email?.toLowerCase(),
+        updatedAt: new Date(),
+      },
+      { new: true },
+    );
+
+    // Log activity
+    await Activity.create({
+      user: userId,
+      action: "profile_update",
+      description: "Updated profile information",
+      details: { fields: ["name", "email", "mobile"] },
+    });
+
+    req.flash("success", "Profile updated successfully");
+    res.redirect("/profile");
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Failed to update profile");
+    res.redirect("/profile");
+  }
+};
+
+module.exports.changePassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    // Validation
+    if (newPassword !== confirmPassword) {
+      req.flash("error", "New passwords do not match");
+      return res.redirect("/profile#security");
+    }
+
+    if (newPassword.length < 6) {
+      req.flash("error", "Password must be at least 6 characters long");
+      return res.redirect("/profile#security");
+    }
+
+    const user = await User.findById(userId);
+
+    // Verify current password (assuming you have password field in user schema)
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      req.flash("error", "Current password is incorrect");
+      return res.redirect("/profile#security");
+    }
+
+    // Update password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    // Log activity
+    await Activity.create({
+      user: userId,
+      action: "password_change",
+      description: "Changed account password",
+    });
+
+    req.flash("success", "Password changed successfully");
+    res.redirect("/profile#security");
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Failed to change password");
+    res.redirect("/profile#security");
+  }
+};
+
+module.exports.enrollmentHistory = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const enrollments = await Cources.aggregate([
+      { $match: { "students.user": mongoose.Types.ObjectId(userId) } },
+      { $unwind: "$students" },
+      { $match: { "students.user": mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "teacher",
+          foreignField: "_id",
+          as: "teacher",
+        },
+      },
+      { $unwind: "$teacher" },
+      {
+        $project: {
+          CourcesId: "$_id",
+          CourcesTitle: "$title",
+          CourcesImage: "$image.url",
+          CourcesType: "$courceType",
+          teacherName: "$teacher.name",
+          enrolledAt: "$students.enrolledAt",
+          paidPrice: "$students.paidPrice",
+          description: "$students.description",
+          completionPercentage: 0, // You can calculate this based on progress
+          lastAccessed: new Date(), // You should track this separately
+        },
+      },
+      { $sort: { enrolledAt: -1 } },
+    ]);
+
+    res.json({ success: true, enrollments });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to load enrollment history" });
+  }
+};
+
+module.exports.downloadCertificate = async (req, res) => {
+  try {
+    const { certificateId } = req.params;
+    const userId = req.user._id;
+
+    const certificate = await Certificate.findOne({
+      _id: certificateId,
+      user: userId,
+    }).populate("Cources", "title duration");
+
+    if (!certificate) {
+      req.flash("error", "Certificate not found");
+      return res.redirect("/profile");
+    }
+
+    // Generate PDF certificate
+    // You can use libraries like pdfkit or puppeteer here
+    res.json({ success: true, certificate });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to download certificate" });
   }
 };

@@ -30,18 +30,10 @@ module.exports.isOwner = async (req, res, next) => {
 
 module.exports.isAdmin = (req, res, next) => {
   if (req.user.role !== "admin") {
-    req.flash("error", "You do not have permission to access this page.");
+    req.flash("warning", "You do not have permission to access this page.");
     return res.redirect("/");
   }
   console.log("Admin access granted");
-  next();
-};
-
-module.exports.isSales = (req, res, next) => {
-  if (req.user.role !== "SALES") {
-    req.flash("error", "You do not have permission to access this page.");
-    return res.redirect("/");
-  }
   next();
 };
 

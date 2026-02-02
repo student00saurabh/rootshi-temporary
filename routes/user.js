@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync");
 const passport = require("passport");
-const { saveRedirectUrl, isVerified } = require("../middleware.js");
+const { saveRedirectUrl, isVerified, isLoggedIn } = require("../middleware.js");
 
 const userController = require("../controllers/users.js");
 
@@ -34,5 +34,23 @@ router.get("/logout", userController.logout);
 router.post("/verify/:id/resend", userController.resendOtp);
 router.get("/verify-email", userController.renderVerifyEmailForm);
 router.post("/verify/:id", userController.verifyEmail);
+
+router.get("/profile", isLoggedIn, userController.profile);
+router.post("/profile/update", isLoggedIn, userController.updateProfile);
+router.post(
+  "/profile/change-password",
+  isLoggedIn,
+  userController.changePassword,
+);
+router.get(
+  "/profile/enrollments",
+  isLoggedIn,
+  userController.enrollmentHistory,
+);
+router.get(
+  "/certificates/:certificateId/download",
+  isLoggedIn,
+  userController.downloadCertificate,
+);
 
 module.exports = router;

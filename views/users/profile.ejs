@@ -1,159 +1,641 @@
-<%- include('../layouts/boilerplate', { title: title || 'My Profile - Zoopito' }) %>
+<% layout("layouts/boilerplate") %>
 
-<div class="py-6">
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="md:flex md:items-center md:justify-between">
-      <div class="flex-1 min-w-0">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-          My Profile
-        </h2>
-      </div>
-      <div class="mt-4 flex md:mt-0 md:ml-4">
-        <a href="/" class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-          ← Back to Dashboard
-        </a>
+    
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 h-32"></div>
+      <div class="px-8 pb-8 -mt-12">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+          <div class="flex items-center space-x-6">
+            <!-- Profile Avatar -->
+            <div class="w-32 h-32 bg-white rounded-full p-1 shadow-lg">
+              <div class="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center">
+                <span class="text-5xl font-bold text-blue-600">
+                  <%= user.name.charAt(0).toUpperCase() %>
+                </span>
+              </div>
+            </div>
+            
+            <!-- User Info -->
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900"><%= user.name %></h1>
+              <p class="text-gray-600 mt-1">
+                <i class="fas fa-envelope mr-2"></i><%= user.email %>
+                <% if(user.mobile) { %>
+                  <span class="ml-4">
+                    <i class="fas fa-phone mr-2"></i><%= user.mobile %>
+                  </span>
+                <% } %>
+              </p>
+              <div class="flex items-center space-x-4 mt-3">
+                <span class="px-4 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  <i class="fas fa-user-tag mr-1"></i><%= user.role.toUpperCase() %>
+                </span>
+                <span class="px-4 py-1 <%= user.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %> rounded-full text-sm font-medium">
+                  <i class="fas fa-<%= user.isVerified ? 'check-circle' : 'clock' %> mr-1"></i>
+                  <%= user.isVerified ? 'Verified' : 'Pending Verification' %>
+                </span>
+                <% if(user.googleId) { %>
+                  <span class="px-4 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+                    <i class="fab fa-google mr-1"></i>Google Account
+                  </span>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="mt-6 md:mt-0 flex space-x-4">
+            <button onclick="openEditModal()" 
+                    class="px-6 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
+              <i class="fas fa-edit mr-2"></i>Edit Profile
+            </button>
+            <a href="/settings" 
+               class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <i class="fas fa-cog mr-2"></i>Settings
+            </a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-    <% if (success) { %>
-      <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-        <%= success %>
-      </div>
-    <% } %>
-    <% if (error) { %>
-      <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        <%= error %>
-      </div>
-    <% } %>
-
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <!-- Profile Information -->
-      <div class="lg:col-span-2">
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6">Profile Information</h3>
+    
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left Column - Stats & Quick Actions -->
+      <div class="lg:col-span-1 space-y-8">
+        
+        <!-- Learning Stats -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <i class="fas fa-chart-line text-blue-600 mr-3"></i>
+            Learning Statistics
+          </h3>
+          
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Enrolled Courses</span>
+              <span class="text-2xl font-bold text-blue-600"><%= totalEnrolled %></span>
+            </div>
             
-            <form action="/profile/update" method="POST">
-              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                  <input type="text" name="name" id="name" value="<%= user.name %>"
-                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                </div>
-
-                <div>
-                  <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                  <input type="email" name="email" id="email" value="<%= user.email %>" disabled
-                    class="mt-1 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                </div>
-
-                <div>
-                  <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                  <input type="tel" name="phone" id="phone" value="<%= user.phone || '' %>"
-                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                </div>
-
-                <div>
-                  <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
-                  <input type="text" id="role" value="<%= user.role.charAt(0).toUpperCase() + user.role.slice(1).replace('-', ' ') %>" disabled
-                    class="mt-1 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Total Investment</span>
+              <span class="text-2xl font-bold text-green-600">₹<%= totalPaid %></span>
+            </div>
+            
+            <% if(certificates.length > 0) { %>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Certificates Earned</span>
+                <span class="text-2xl font-bold text-purple-600"><%= certificates.length %></span>
               </div>
-
-              <div class="mt-8 flex justify-end">
-                <button type="submit"
-                  class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                  Update Profile
+            <% } %>
+     
+          </div>
+          
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <a href="/my-courses" 
+               class="block w-full text-center py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all">
+              <i class="fas fa-play-circle mr-2"></i>Continue Learning
+            </a>
+          </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <i class="fas fa-bolt text-yellow-500 mr-3"></i>
+            Quick Actions
+          </h3>
+          
+          <div class="space-y-3">
+            <a href="/courses" 
+               class="flex items-center justify-between p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors group">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200">
+                  <i class="fas fa-search text-blue-600"></i>
+                </div>
+                <span class="font-medium text-gray-800">Browse Courses</span>
+              </div>
+              <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-600"></i>
+            </a>
+            
+            <a href="/certificates" 
+               class="flex items-center justify-between p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-colors group">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200">
+                  <i class="fas fa-award text-green-600"></i>
+                </div>
+                <span class="font-medium text-gray-800">My Certificates</span>
+              </div>
+              <i class="fas fa-chevron-right text-gray-400 group-hover:text-green-600"></i>
+            </a>
+            
+            <a href="/support" 
+               class="flex items-center justify-between p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-200">
+                  <i class="fas fa-headset text-purple-600"></i>
+                </div>
+                <span class="font-medium text-gray-800">Get Support</span>
+              </div>
+              <i class="fas fa-chevron-right text-gray-400 group-hover:text-purple-600"></i>
+            </a>
+            
+            <% if(user.role === 'teacher') { %>
+              <a href="/instructor/dashboard" 
+                 class="flex items-center justify-between p-4 bg-orange-50 hover:bg-orange-100 rounded-xl transition-colors group">
+                <div class="flex items-center">
+                  <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-orange-200">
+                    <i class="fas fa-chalkboard-teacher text-orange-600"></i>
+                  </div>
+                  <span class="font-medium text-gray-800">Instructor Dashboard</span>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400 group-hover:text-orange-600"></i>
+              </a>
+            <% } %>
+          </div>
+        </div>
+        
+        <!-- Account Status -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <i class="fas fa-shield-alt text-green-600 mr-3"></i>
+            Account Status
+          </h3>
+          
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full <%= user.isActive ? 'bg-green-100' : 'bg-red-100' %> flex items-center justify-center mr-3">
+                  <i class="fas fa-<%= user.isActive ? 'check' : 'times' %> text-<%= user.isActive ? 'green' : 'red' %>-600"></i>
+                </div>
+                <span class="text-gray-700">Account Status</span>
+              </div>
+              <span class="font-medium <%= user.isActive ? 'text-green-600' : 'text-red-600' %>">
+                <%= user.isActive ? 'Active' : 'Inactive' %>
+              </span>
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full <%= !user.isBlocked ? 'bg-green-100' : 'bg-red-100' %> flex items-center justify-center mr-3">
+                  <i class="fas fa-<%= !user.isBlocked ? 'lock-open' : 'ban' %> text-<%= !user.isBlocked ? 'green' : 'red' %>-600"></i>
+                </div>
+                <span class="text-gray-700">Block Status</span>
+              </div>
+              <span class="font-medium <%= !user.isBlocked ? 'text-green-600' : 'text-red-600' %>">
+                <%= !user.isBlocked ? 'Not Blocked' : 'Blocked' %>
+              </span>
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full <%= user.isVerified ? 'bg-green-100' : 'bg-yellow-100' %> flex items-center justify-center mr-3">
+                  <i class="fas fa-<%= user.isVerified ? 'check-circle' : 'clock' %> text-<%= user.isVerified ? 'green' : 'yellow' %>-600"></i>
+                </div>
+                <span class="text-gray-700">Email Verification</span>
+              </div>
+              <% if(!user.isVerified) { %>
+                <button onclick="resendVerification()" 
+                        class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                  Resend Email
                 </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- Additional Information based on role -->
-        <% if (paravetProfile) { %>
-        <div class="bg-white shadow rounded-lg mt-6">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6">Paravet Information</h3>
-            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-              <div class="sm:col-span-1">
-                <dt class="text-sm font-medium text-gray-500">Qualification</dt>
-                <dd class="mt-1 text-sm text-gray-900"><%= paravetProfile.qualification || 'Not specified' %></dd>
-              </div>
-              <div class="sm:col-span-1">
-                <dt class="text-sm font-medium text-gray-500">License Number</dt>
-                <dd class="mt-1 text-sm text-gray-900"><%= paravetProfile.licenseNumber || 'Not specified' %></dd>
-              </div>
-              <div class="sm:col-span-1">
-                <dt class="text-sm font-medium text-gray-500">Assigned Areas</dt>
-                <dd class="mt-1 text-sm text-gray-900">
-                  <% if (paravetProfile.assignedAreas && paravetProfile.assignedAreas.length > 0) { %>
-                    <%= paravetProfile.assignedAreas.map(area => area.village).join(', ') %>
-                  <% } else { %>
-                    No areas assigned yet
-                  <% } %>
-                </dd>
-              </div>
-              <div class="sm:col-span-1">
-                <dt class="text-sm font-medium text-gray-500">Total Services</dt>
-                <dd class="mt-1 text-sm text-gray-900"><%= paravetProfile.totalServicesCompleted || 0 %></dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-        <% } %>
-      </div>
-
-      <!-- Account Actions -->
-      <div>
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6">Account Actions</h3>
+              <% } %>
+            </div>
             
-            <div class="space-y-4">
-              <a href="/change-password"
-                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                Change Password
-              </a>
-              
-              <a href="/logout" onclick="return confirm('Are you sure you want to logout?')"
-                class="w-full flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
-                Logout
-              </a>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                  <i class="fas fa-calendar-alt text-blue-600"></i>
+                </div>
+                <span class="text-gray-700">Member Since</span>
+              </div>
+              <span class="font-medium text-gray-900">
+                <%= moment(user.createdAt).format('MMM DD, YYYY') %>
+              </span>
             </div>
           </div>
         </div>
-
-        <!-- Account Stats -->
-        <div class="bg-white shadow rounded-lg mt-6">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6">Account Information</h3>
+      </div>
+      
+      <!-- Right Column - Courses & Activity -->
+      <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Enrolled Courses -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-900 flex items-center">
+              <i class="fas fa-graduation-cap text-indigo-600 mr-3"></i>
+              My Enrolled Courses
+            </h3>
+            <a href="/my-courses" 
+               class="text-blue-600 hover:text-blue-800 font-medium">
+              View All
+            </a>
+          </div>
+          
+          <% if(enrolledCourses.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <% enrolledCourses.slice(0, 4).forEach(course => { 
+                const studentInfo = course.students.find(s => s.user.equals(user._id));
+              %>
+                <div class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                  <div class="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
+                    <% if(course.image && course.image.url) { %>
+                      <img src="<%= course.image.url %>" alt="<%= course.title %>" class="w-full h-full object-cover">
+                    <% } %>
+                    <div class="absolute top-3 right-3">
+                      <span class="px-3 py-1 bg-white bg-opacity-90 text-blue-700 rounded-full text-xs font-medium">
+                        <%= course.courceType %>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="p-4">
+                    <h4 class="font-bold text-gray-900 mb-2 truncate"><%= course.title %></h4>
+                    <p class="text-sm text-gray-600 mb-3 line-clamp-2"><%= course.shortDescription %></p>
+                    
+                    <div class="flex items-center justify-between text-sm">
+                      <div class="flex items-center text-gray-500">
+                        <i class="fas fa-user-graduate mr-2"></i>
+                        <span><%= course.teacher?.name || 'Instructor' %></span>
+                      </div>
+                      <div class="text-green-600 font-bold">
+                        ₹<%= studentInfo?.paidPrice || course.price %>
+                      </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                      <a href="/courses/<%= course._id %>/learn" 
+                         class="block w-full text-center py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-play mr-2"></i>Continue Course
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
             
-            <dl class="space-y-4">
-              <div class="flex items-center justify-between">
-                <dt class="text-sm font-medium text-gray-500">Member since</dt>
-                <dd class="text-sm text-gray-900"><%= new Date(user.createdAt).toLocaleDateString() %></dd>
+            <% if(enrolledCourses.length > 4) { %>
+              <div class="mt-6 text-center">
+                <a href="/my-courses" 
+                   class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                  View <%= enrolledCourses.length - 4 %> more courses
+                  <i class="fas fa-arrow-right ml-2"></i>
+                </a>
               </div>
-              
-              <div class="flex items-center justify-between">
-                <dt class="text-sm font-medium text-gray-500">Last login</dt>
-                <dd class="text-sm text-gray-900"><%= user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never' %></dd>
+            <% } %>
+          <% } else { %>
+            <div class="text-center py-8">
+              <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-book-open text-gray-400 text-3xl"></i>
               </div>
-              
-              <div class="flex items-center justify-between">
-                <dt class="text-sm font-medium text-gray-500">Account status</dt>
-                <dd class="text-sm">
-                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Active
-                  </span>
-                </dd>
+              <h4 class="text-lg font-medium text-gray-900 mb-2">No courses enrolled yet</h4>
+              <p class="text-gray-600 mb-6">Start your learning journey by enrolling in a course</p>
+              <a href="/courses" 
+                 class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all">
+                Browse Courses
+              </a>
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <i class="fas fa-history text-orange-600 mr-3"></i>
+            Recent Activity
+          </h3>
+          
+          <% if(recentActivity.length > 0) { %>
+            <div class="space-y-4">
+              <% recentActivity.forEach(activity => { %>
+                <div class="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors">
+                  <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center 
+                    <% switch(activity.action) {
+                      case 'enrollment': %>bg-blue-100 text-blue-600<% break;
+                      case 'course_completion': %>bg-green-100 text-green-600<% break;
+                      case 'certificate_earned': %>bg-purple-100 text-purple-600<% break;
+                      case 'profile_update': %>bg-yellow-100 text-yellow-600<% break;
+                      default: %>bg-gray-100 text-gray-600<% break;
+                    } %>">
+                    <i class="fas 
+                      <% switch(activity.action) {
+                        case 'enrollment': %>fa-book-open<% break;
+                        case 'course_completion': %>fa-check-circle<% break;
+                        case 'certificate_earned': %>fa-award<% break;
+                        case 'profile_update': %>fa-user-edit<% break;
+                        default: %>fa-bell<% break;
+                      } %>">
+                    </i>
+                  </div>
+                  
+                  <div class="flex-1">
+                    <p class="text-gray-800"><%= activity.description %></p>
+                    <p class="text-sm text-gray-500 mt-1">
+                      <%= moment(activity.createdAt).fromNow() %>
+                    </p>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="text-center py-8">
+              <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-clock text-gray-400 text-3xl"></i>
               </div>
-            </dl>
+              <p class="text-gray-600">No recent activity to show</p>
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Certificates -->
+        <% if(certificates.length > 0) { %>
+          <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-award text-purple-600 mr-3"></i>
+                My Certificates
+              </h3>
+              <a href="/certificates" 
+                 class="text-blue-600 hover:text-blue-800 font-medium">
+                View All
+              </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <% certificates.slice(0, 2).forEach(cert => { %>
+                <div class="border border-gray-200 rounded-xl p-5 bg-gradient-to-br from-gray-50 to-white">
+                  <div class="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 class="font-bold text-gray-900"><%= cert.course?.title %></h4>
+                      <p class="text-sm text-gray-600">Completion Certificate</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-award text-purple-600 text-xl"></i>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <span>Issued: <%= moment(cert.issuedAt).format('MMM DD, YYYY') %></span>
+                    <span class="font-medium text-green-600">Valid</span>
+                  </div>
+                  
+                  <div class="flex space-x-3">
+                    <button onclick="viewCertificate('<%= cert._id %>')" 
+                            class="flex-1 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-center">
+                      <i class="fas fa-eye mr-2"></i>View
+                    </button>
+                    <button onclick="downloadCertificate('<%= cert._id %>')" 
+                            class="flex-1 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-center">
+                      <i class="fas fa-download mr-2"></i>Download
+                    </button>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
+        
+
+
+<!-- Edit Profile Modal -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl font-bold text-gray-900">Edit Profile</h3>
+        <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <form id="editForm" method="POST" action="/profile/update" class="p-6">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+          <input type="text" 
+                 name="name" 
+                 value="<%= user.name %>"
+                 required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+          <input type="email" 
+                 name="email" 
+                 value="<%= user.email %>"
+                 required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <% if(user.googleId) { %>
+            <p class="text-sm text-gray-500 mt-1">Note: Changing email may affect Google login</p>
+          <% } %>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+          <input type="tel" 
+                 name="mobile" 
+                 value="<%= user.mobile || '' %>"
+                 pattern="[0-9]{10}"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="10-digit mobile number">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+          <div class="px-4 py-3 bg-gray-50 rounded-lg">
+            <span class="font-medium text-gray-900"><%= user.role.toUpperCase() %></span>
+            <p class="text-sm text-gray-500 mt-1">Contact admin to change your role</p>
           </div>
         </div>
       </div>
-    </div>
+      
+      <div class="mt-8 flex justify-end space-x-4">
+        <button type="button" 
+                onclick="closeEditModal()"
+                class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+          Cancel
+        </button>
+        <button type="submit" 
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          Save Changes
+        </button>
+      </div>
+    </form>
   </div>
 </div>
+
+<!-- Certificate Modal -->
+<div id="certificateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <!-- Certificate content will be loaded here -->
+  </div>
+</div>
+
+<script>
+// Modal Functions
+function openEditModal() {
+  const modal = document.getElementById('editModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeEditModal() {
+  const modal = document.getElementById('editModal');
+  modal.classList.remove('flex');
+  modal.classList.add('hidden');
+}
+
+// Certificate Functions
+function viewCertificate(certificateId) {
+  // Load and display certificate in modal
+  fetch(`/certificates/${certificateId}/view`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Display certificate in modal
+        // You can implement this based on your certificate format
+        alert('Certificate view would open here');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to load certificate');
+    });
+}
+
+function downloadCertificate(certificateId) {
+  window.open(`/certificates/${certificateId}/download`, '_blank');
+}
+
+function resendVerification() {
+  fetch('/auth/resend-verification', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Verification email sent! Please check your inbox.');
+    } else {
+      alert(data.message || 'Failed to send verification email');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to send verification email');
+  });
+}
+
+// Load more courses/enrollments
+function loadMore(type) {
+  const loader = document.getElementById(`${type}Loader`);
+  const container = document.getElementById(`${type}Container`);
+  const loadMoreBtn = document.getElementById(`loadMore${type}`);
+  
+  loader.classList.remove('hidden');
+  loadMoreBtn.classList.add('hidden');
+  
+  // Simulate loading
+  setTimeout(() => {
+    // Load more content here via AJAX
+    loader.classList.add('hidden');
+    loadMoreBtn.classList.remove('hidden');
+  }, 1000);
+}
+
+// Close modals on escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeEditModal();
+  }
+});
+
+// Prevent form submission for demo
+document.getElementById('editForm')?.addEventListener('submit', function(e) {
+  // Form will submit normally in production
+});
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize any tooltips or other UI components
+  console.log('Profile page loaded');
+});
+</script>
+
+<style>
+/* Custom styles */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Modal animations */
+#editModal > div,
+#certificateModal > div {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects */
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>

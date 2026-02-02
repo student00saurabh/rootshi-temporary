@@ -24,11 +24,6 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-
-    password: {
-      type: String,
-      select: false,
-    },
     role: {
       type: String,
       enum: ["admin", "user", "teacher"],
