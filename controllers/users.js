@@ -617,11 +617,6 @@ module.exports.renderLoginForm = (req, res) => {
   }
 };
 
-module.exports.renderLoginForm = (req, res) => {
-  if (res.locals.currUser) return res.redirect("/");
-  res.render("users/login.ejs");
-};
-
 module.exports.login = async (req, res) => {
   req.flash("success", "Welcome back to Root-Shield!");
   const redirectUrl = res.locals.redirectUrl || "/";

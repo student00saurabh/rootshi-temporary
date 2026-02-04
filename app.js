@@ -179,5 +179,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000, () => {
-  console.log(`Zoopito is working at ${3000}`);
+  console.log(`RootShield is working at ${3000}`);
 });
