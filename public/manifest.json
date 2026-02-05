@@ -1,6 +1,6 @@
 {
-  "name": "My Web App",
-  "short_name": "MyApp",
+  "name": "RootShield App",
+  "short_name": "RootShield",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
