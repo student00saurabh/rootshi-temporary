@@ -142,10 +142,6 @@ app.use((req, res, next) => {
   next();
 });
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js");
-}
-
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
