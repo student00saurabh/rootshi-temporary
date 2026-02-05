@@ -18,6 +18,7 @@ module.exports.homePage = async (req, res, next) => {
 
     res.render("rootshield/home.ejs", {
       totalUsers,
+      showsplash: true,
       totalInstructors,
       totalCources,
       cources,
