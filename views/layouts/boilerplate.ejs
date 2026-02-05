@@ -101,7 +101,64 @@
 </head>
 
 <body class="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<style>
+  #splash {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, white, #1ecbe1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  z-index: 9999;
+  animation: hideSplash 1s ease 2.5s forwards;
+}
 
+.logo {
+  width: 130px;
+  animation: bounceIn 1.2s ease;
+  z-index: 2;
+}
+
+/* Floating blobs */
+
+.blob {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  animation: float 6s infinite alternate ease-in-out;
+}
+
+.blob1 { top: -80px; left: -80px; }
+.blob2 { bottom: -80px; right: -80px; }
+
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes float {
+  from { transform: translateY(0); }
+  to { transform: translateY(60px); }
+}
+
+@keyframes hideSplash {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+</style>
+  <div id="splash">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+
+  <img src="images/logo.png" class="logo" />
+</div>
   <!-- Navbar -->
   <%- include("../includes/navbar.ejs") %>
 
