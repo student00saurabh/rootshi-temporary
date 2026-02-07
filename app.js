@@ -28,6 +28,7 @@ const user = require("./models/user.js");
 const adminRouter = require("./routes/admin.js");
 const othersRouter = require("./routes/others.js");
 const blogRouter = require("./routes/blog.js");
+const sitemapRouter = require("./routes/sitemap.js");
 const seoMeta = require("./utils/seoMeta.json");
 
 const dbUrl = process.env.ATLUSDB_URL;
@@ -184,6 +185,7 @@ app.use("/", userRouter);
 app.use("/", homeRouter);
 app.use("/", resetRout);
 app.use("/", othersRouter);
+app.use("/", sitemapRouter);
 app.use("/blogs", blogRouter);
 app.use("/admin", adminRouter);
 
