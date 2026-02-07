@@ -28,6 +28,7 @@ const user = require("./models/user.js");
 const adminRouter = require("./routes/admin.js");
 const othersRouter = require("./routes/others.js");
 const blogRouter = require("./routes/blog.js");
+const seoMeta = require("./utils/seoMeta.json");
 
 const dbUrl = process.env.ATLUSDB_URL;
 
@@ -140,6 +141,25 @@ app.use((req, res, next) => {
   res.locals.currUser = req.user || null;
   res.locals.currentPath = req.path;
   res.locals.showsplash = false;
+  next();
+});
+
+app.use((req, res, next) => {
+  let meta = seoMeta[req.path];
+
+  if (!meta) {
+    if (req.path.startsWith("/blogs")) meta = seoMeta["/blogs"];
+    else if (req.path.startsWith("/courses")) meta = seoMeta["/courses"];
+    else meta = seoMeta["/"];
+  }
+
+  res.locals.meta = meta;
+  next();
+});
+
+app.use((req, res, next) => {
+  res.locals.requestUrl =
+    req.protocol + "://" + req.get("host") + req.originalUrl;
   next();
 });
 

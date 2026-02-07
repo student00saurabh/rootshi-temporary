@@ -24,7 +24,7 @@
         <div class="px-6 py-6">
           <div class="space-y-3">
             <!-- Facebook -->
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https:/.online/blogs/<%= blog._id %>" 
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https:/.online/blogs/<%= blog.id %>" 
                target="_blank"
                class="flex items-center gap-3 bg-[#3b5998] text-white px-4 py-3 rounded-xl hover:bg-[#2d4373] transition-colors">
               <i class="fab fa-facebook-f text-lg w-6 text-center"></i>
@@ -32,7 +32,7 @@
             </a>
 
             <!-- WhatsApp -->
-            <a href="https://api.whatsapp.com/send?text=https:/.online/blogs/<%= blog._id %>" 
+            <a href="https://api.whatsapp.com/send?text=https:/.online/blogs/<%= blog.id %>" 
                target="_blank"
                class="flex items-center gap-3 bg-[#25D366] text-white px-4 py-3 rounded-xl hover:bg-[#128C7E] transition-colors">
               <i class="fab fa-whatsapp text-lg w-6 text-center"></i>
@@ -40,7 +40,7 @@
             </a>
 
             <!-- Twitter -->
-            <a href="https://twitter.com/intent/tweet?url=https:/.online/blogs/<%= blog._id %>&text=Check%20this%20out!" 
+            <a href="https://twitter.com/intent/tweet?url=https:/.online/blogs/<%= blog.id %>&text=Check%20this%20out!" 
                target="_blank"
                class="flex items-center gap-3 bg-[#1DA1F2] text-white px-4 py-3 rounded-xl hover:bg-[#0c85d0] transition-colors">
               <i class="fab fa-twitter text-lg w-6 text-center"></i>
@@ -48,7 +48,7 @@
             </a>
 
             <!-- LinkedIn -->
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=https:/.online/blogs/<%= blog._id %>" 
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=https:/.online/blogs/<%= blog.id %>" 
                target="_blank"
                class="flex items-center gap-3 bg-[#0077B5] text-white px-4 py-3 rounded-xl hover:bg-[#005582] transition-colors">
               <i class="fab fa-linkedin-in text-lg w-6 text-center"></i>
@@ -70,7 +70,7 @@
             <div class="flex items-center gap-2">
               <input type="text" 
                      id="shareUrl" 
-                     value="https:/.online/blogs/<%= blog._id %>" 
+                     value="https:/.online/blogs/<%= blog.id %>" 
                      readonly
                      class="flex-1 text-sm text-gray-700 bg-transparent border-none focus:outline-none">
               <button onclick="copyToClipboard()" class="text-gray-500 hover:text-blue-600">

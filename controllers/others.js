@@ -64,3 +64,7 @@ module.exports.subscribe = async (req, res) => {
     });
   }
 };
+
+module.exports.carriers = async (req, res) => {
+  res.render("others/careers.ejs");
+};

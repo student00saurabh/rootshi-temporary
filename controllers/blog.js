@@ -98,7 +98,15 @@ module.exports.showBlog = async (req, res) => {
     .populate("author")
     .limit(10);
 
+  const dynamicMeta = {
+    title: blog.title + " | RootShield Blog",
+    description: blog.shortdescription,
+    keywords: blog.keywords,
+    image: blog.image.url,
+  };
+
   res.render("blogs/show.ejs", {
+    meta: dynamicMeta,
     blog,
     comments: paginatedComments,
     currentPage: 1,

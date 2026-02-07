@@ -5,42 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <title>RootShield</title>
+  <title><%= meta.title %></title>
 
   <link rel="manifest" href="/manifest.json">
   <!-- Primary Meta Tags -->
-  <meta name="title" content="RootShield | Secure Access & Protection Platform" />
+  <meta name="title" content="<%= meta.title %>" />
   <meta
     name="description"
-    content="RootShield is a secure access and protection platform designed for administrators, analysts, and organizations to safeguard systems and digital assets."
+    content="<%= meta.description %>"
   />
   <meta
     name="keywords"
-    content="rootshield, cybersecurity platform, secure access, system protection, admin security, root access management"
+    content="<%= meta.keywords %>"
   />
   <meta name="author" content="Saurabh Mishra" />
   <meta name="robots" content="index, follow" />
 
   <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://rootshield.in/" />
-  <meta property="og:title" content="Root Shield | Secure Access & Protection Platform" />
+  <meta property="og:url" content="<%= requestUrl %>" />
+  <meta property="og:title" content="<%= meta.title %>" />
   <meta
     property="og:description"
-    content="Protect systems, manage access, and secure digital infrastructure with Root Shield."
+    content="<%= meta.description %>"
   />
-  <meta property="og:image" content="https://rootshield.in/images/logo.png" />
+  <meta property="og:image" content="<%= meta.image || 'https://rootshield.in/images/logo.png' %>" />
   <meta property="og:site_name" content="RootShield" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://rootshield.in/" />
-  <meta property="twitter:title" content="Root Shield | Secure Access & Protection Platform" />
+  <meta property="twitter:url" content="<%= requestUrl %>" />
+  <meta property="twitter:title" content="<%= meta.title %>" />
   <meta
     property="twitter:description"
-    content="Root Shield helps organizations manage secure access and protect critical systems."
+    content="<%= meta.description %>"
   />
-  <meta property="twitter:image" content="https://rootshield.in/images/logo.png" />
+  <meta property="twitter:image" content="<%= meta.image || 'https://rootshield.in/images/logo.png' %>" />
 
 
 
@@ -55,6 +55,7 @@
   <meta name="msapplication-TileColor" content="#1ecbe1" />
   <meta name="theme-color" content="#1bb9cd" />
 
+  <meta name="google-site-verification" content="8n3XxgtF0QHGEe4Ivf9u4TMHAvFjcWXOGrzaGNSMMXY" />
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 

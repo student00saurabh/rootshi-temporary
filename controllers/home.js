@@ -440,3 +440,18 @@ module.exports.enrollCourse = async (req, res) => {
     return res.redirect(redirectUrl);
   }
 };
+
+// view cource
+// const course = await Course.findById(req.params.id);
+
+// const dynamicMeta = {
+//   title: course.title + " | RootShield Courses",
+//   description: course.shortDescription,
+//   keywords: course.keywords.join(", "),
+//   image: course.thumbnail,
+// };
+
+// res.render("courseView", {
+//   course,
+//   meta: dynamicMeta,
+// });
