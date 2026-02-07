@@ -160,7 +160,7 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   res.locals.requestUrl =
-    req.protocol + "://" + req.get("host") + req.originalUrl;
+    req.protocol + "://" + "rootshield.in" + req.originalUrl;
   next();
 });
 
