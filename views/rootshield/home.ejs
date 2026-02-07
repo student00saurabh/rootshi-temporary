@@ -82,8 +82,8 @@
                                     <span class="ml-1">4.9</span>
                                 </span>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2"><%= popularCourse.title %></h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4"><%= popularCourse.shortDescription %></p>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2"><%= popularCourse.title.length > 40?popularCourse.title.slice(0,40) + "...": popularCourse.title %></h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4"><%= popularCourse.shortDescription.length > 120?popularCourse.shortDescription.slice(0,120) + "...":popularCourse.shortDescription %></p>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-4">
                                     <div class="flex items-center">
@@ -154,10 +154,10 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                        <%= course.title %>
+                        <%= course.title.length > 45 ? course.title.slice(0,45) + "..." : course.title %>
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">
-                        <%= course.shortDescription %>
+                        <%= course.shortDescription.length > 120? course.shortDescription.slice(0,120) + "...": course.shortDescription %>
                     </p>
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
@@ -648,11 +648,11 @@ contactForm.onsubmit = e => {
                             </div>
 
                             <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                                <%= blog.title %>
+                                <%= blog.title.length > 50? blog.title.slice(0,50) + "...": blog.title %>
                             </h3>
 
                             <p class="text-gray-600 dark:text-gray-400 mb-4">
-                                <%= blog.shortdescription %>
+                                <%= blog.shortdescription.length > 120 ? blog.shortdescription.slice(0,120) + "..." : blog.shortdescription %>
                             </p>
 
                             <a href="/blogs/<%= blog._id %>" class="text-cyan-600 dark:text-cyan-300 hover:text-cyan-500 dark:hover:text-cyan-200 font-medium inline-flex items-center">
