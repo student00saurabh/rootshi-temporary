@@ -4,7 +4,8 @@ const User = require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync");
 const passport = require("passport");
 const { saveRedirectUrl, isVerified, isLoggedIn } = require("../middleware.js");
-
+const multer = require("multer");
+const upload = multer();
 const userController = require("../controllers/users.js");
 
 // signup GET
@@ -36,7 +37,12 @@ router.get("/verify-email", userController.renderVerifyEmailForm);
 router.post("/verify/:id", userController.verifyEmail);
 
 router.get("/profile", isLoggedIn, userController.profile);
-router.post("/profile/update", isLoggedIn, userController.updateProfile);
+router.post(
+  "/profile/update",
+  upload.none(),
+  isLoggedIn,
+  userController.updateProfile,
+);
 router.post(
   "/profile/change-password",
   isLoggedIn,

@@ -1,7 +1,98 @@
 const User = require("../models/user");
 const crypto = require("crypto");
 const Contact = require("../models/contact");
+const Course = require("../models/cources");
 const Subscriber = require("../models/subscriber");
+
+module.exports.adminDashboard = async (req, res) => {
+  try {
+    // Get stats
+    const totalUsers = await User.countDocuments();
+    const totalCourses = await Course.countDocuments();
+
+    // Get recent 30 days data for growth calculation
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const previousUsers = await User.countDocuments({
+      createdAt: { $lt: thirtyDaysAgo },
+    });
+    const currentUsers = totalUsers - previousUsers;
+    const userGrowth =
+      previousUsers > 0
+        ? Math.round(((currentUsers - previousUsers) / previousUsers) * 100)
+        : 100;
+
+    // Get revenue data
+    const transactions = null; //await Transaction.find({ status: "completed" });
+    const totalRevenue = null; //transactions.reduce(
+    //   (sum, txn) => sum + (txn.amount || 0),
+    //   0,
+    // );
+
+    // Get pending actions
+    const pendingContacts = await Contact.countDocuments({ status: "pending" });
+    const pendingSubscribers = await Subscriber.countDocuments({
+      status: "pending",
+    });
+    const pendingActions = pendingContacts + pendingSubscribers;
+
+    // Get recent users (last 10)
+    const recentUsers = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select("name email role isVerified isBlocked createdAt");
+
+    // Get recent activities (you might want to create an Activity model)
+    const recentActivities = [
+      {
+        type: "user",
+        title: "New User Registration",
+        description: "John Doe registered as a student",
+        timestamp: new Date(),
+        user: { name: "John Doe", email: "john@example.com" },
+      },
+      {
+        type: "course",
+        title: "Course Created",
+        description: 'New course "React Masterclass" published',
+        timestamp: new Date(Date.now() - 3600000),
+        user: { name: "Jane Smith", email: "jane@example.com" },
+      },
+      {
+        type: "payment",
+        title: "Payment Received",
+        description: "Payment of ₹1999 for course enrollment",
+        timestamp: new Date(Date.now() - 7200000),
+        user: { name: "Bob Wilson", email: "bob@example.com" },
+      },
+    ];
+
+    res.render("admin/dashboard.ejs", {
+      stats: {
+        totalUsers,
+        totalCourses,
+        totalRevenue,
+        pendingActions,
+        userGrowth,
+        courseGrowth: 12, // You can calculate this similar to userGrowth
+        revenueGrowth: 8, // You can calculate this similar to userGrowth
+        activeSessions: Math.floor(Math.random() * 100) + 50, // For demo
+        uptime: "99.9%",
+      },
+      recentUsers,
+      recentActivities,
+      moment: require("moment"),
+      csrfToken: req.csrfToken(),
+    });
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    res.status(500).render("error", {
+      message: error.message,
+      statusCode: 500,
+    });
+  }
+};
 
 module.exports.index = async (req, res) => {
   try {

@@ -117,10 +117,10 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                        <%= course.title %>
+                        <%= course.title.length > 45 ? course.title.slice(0,45) + "..." : course.title %>
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">
-                        <%= course.shortDescription %>
+                        <%= course.shortDescription.length > 120? course.shortDescription.slice(0,120) + "...": course.shortDescription %>
                     </p>
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">

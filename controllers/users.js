@@ -578,7 +578,7 @@ module.exports.renderSignupForm = async (req, res) => {
     res.render("users/signup.ejs");
   } catch (err) {
     console.error("❌ Error loading signup form:", err);
-    req.flash("error", "Unable to load registration page. Please try again.");
+    req.flash("primary", "Unable to load registration page. Please try again.");
     res.redirect("/");
   }
 };
@@ -645,7 +645,7 @@ module.exports.verifyEmail = async (req, res) => {
     const { id } = req.params;
 
     if (!otp || otp.length !== 6) {
-      req.flash("error", "Please enter a valid 6-digit OTP.");
+      req.flash("warning", "Please enter a valid 6-digit OTP.");
       return res.redirect(`/verify-email?email=${req.body.email || ""}`);
     }
 
@@ -666,20 +666,20 @@ module.exports.verifyEmail = async (req, res) => {
 
     if (!user.otp || !user.otpExpires) {
       req.flash(
-        "error",
+        "warning",
         "No active OTP found. Please request a new verification code.",
       );
       return res.redirect(`/verify-email?email=${user.email}`);
     }
 
     if (user.otp !== otp) {
-      req.flash("error", "Invalid OTP. Please check the code and try again.");
+      req.flash("warning", "Invalid OTP. Please check the code and try again.");
       return res.redirect(`/verify-email?email=${user.email}`);
     }
 
     if (user.otpExpires < Date.now()) {
       req.flash(
-        "error",
+        "warning",
         "OTP has expired. Please request a new verification code.",
       );
       return res.redirect(`/verify-email?email=${user.email}`);
@@ -738,7 +738,7 @@ module.exports.resendOtp = async (req, res) => {
     // Rate limiting: Check if OTP was recently sent
     if (user.otpExpires && user.otpExpires > Date.now() - 60000) {
       req.flash(
-        "error",
+        "primary",
         "Please wait at least 1 minute before requesting a new OTP.",
       );
       return res.redirect(`/verify-email?email=${user.email}`);
@@ -896,9 +896,18 @@ module.exports.profile = async (req, res) => {
 module.exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { name, mobile, email } = req.body;
 
-    // Check if email is already taken by another user
+    // Safely read body
+    const { name, mobile, email } = req.body || {};
+
+    if (!name && !mobile && !email) {
+      return res.status(400).json({
+        success: false,
+        message: "No data provided",
+      });
+    }
+
+    // ✅ Email duplicate check
     if (email) {
       const existingUser = await User.findOne({
         email: email.toLowerCase(),
@@ -906,12 +915,14 @@ module.exports.updateProfile = async (req, res) => {
       });
 
       if (existingUser) {
-        req.flash("error", "Email already in use");
-        return res.redirect("/profile");
+        return res.json({
+          success: false,
+          message: "Email already in use",
+        });
       }
     }
 
-    // Check if mobile is already taken by another user
+    // ✅ Mobile duplicate check
     if (mobile) {
       const existingUser = await User.findOne({
         mobile,
@@ -919,12 +930,14 @@ module.exports.updateProfile = async (req, res) => {
       });
 
       if (existingUser) {
-        req.flash("error", "Mobile number already in use");
-        return res.redirect("/profile");
+        return res.json({
+          success: false,
+          message: "Mobile number already in use",
+        });
       }
     }
 
-    // Update user
+    // ✅ Update user
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
@@ -936,20 +949,28 @@ module.exports.updateProfile = async (req, res) => {
       { new: true },
     );
 
-    // Log activity
-    await Activity.create({
-      user: userId,
-      action: "profile_update",
-      description: "Updated profile information",
-      details: { fields: ["name", "email", "mobile"] },
-    });
+    // ✅ Log activity
+    // await Activity.create({
+    //   user: userId,
+    //   action: "profile_update",
+    //   description: "Updated profile information",
+    //   details: { fields: ["name", "email", "mobile"] },
+    // });
 
-    req.flash("success", "Profile updated successfully");
-    res.redirect("/profile");
+    // ✅ Send JSON success
+    return res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
   } catch (err) {
-    console.log(err);
-    req.flash("error", "Failed to update profile");
-    res.redirect("/profile");
+    console.error("UPDATE PROFILE ERROR:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      stack: err.stack, // remove later in production
+    });
   }
 };
 
@@ -965,7 +986,7 @@ module.exports.changePassword = async (req, res) => {
     }
 
     if (newPassword.length < 6) {
-      req.flash("error", "Password must be at least 6 characters long");
+      req.flash("warning", "Password must be at least 6 characters long");
       return res.redirect("/profile#security");
     }
 

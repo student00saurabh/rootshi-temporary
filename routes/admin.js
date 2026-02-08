@@ -7,6 +7,7 @@ const multer = require("multer");
 const { cloudinary, storage } = require("../Cloudconfig.js");
 const upload = multer({ storage });
 
+router.get("/dashboard", isLoggedIn, isAdmin, adminController.adminDashboard);
 // router.route("/login").get(userController.renderLoginForm);
 router.get("/", isLoggedIn, isAdmin, adminController.index);
 router.get(

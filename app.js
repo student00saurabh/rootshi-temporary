@@ -6,6 +6,8 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
+const csrf = require("csurf");
+const cookieParser = require("cookie-parser");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
@@ -79,6 +81,14 @@ const sessionOptions = {
 
 app.use(session(sessionOptions));
 app.use(flash());
+
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
+
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : "";
+  next();
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -176,7 +186,7 @@ app.get(
     failureFlash: true,
   }),
   (req, res) => {
-    req.flash("success", "Logged in using Google!");
+    req.flash("success", "Welcome back to Root-Shield!");
     res.redirect("/");
   },
 );

@@ -477,35 +477,43 @@ document.getElementById('editForm')?.addEventListener('submit', function(e) {
   const formData = new FormData(this);
   
   // Send POST request
-  fetch(this.action, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Show success message
-      showNotification('Profile updated successfully!', 'success');
-      
-      // Close modal after delay
+ fetch(this.action, {
+  method: 'POST',
+  body: formData,
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+  }
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+})
+.then(data => {        // ✅ directly use data
+  if (data.success) {
+
+    showNotification('Profile updated successfully!', 'success');
+
+    setTimeout(() => {
+      closeEditModal();
       setTimeout(() => {
-        closeEditModal();
-        
-        // Reload page to show updated data
-        setTimeout(() => {
-          window.location.reload();
-        }, 300);
-      }, 1500);
-    } else {
-      // Show error message
-      showNotification(data.message || 'Failed to update profile', 'error');
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
-    }
-  })
+        window.location.reload();
+      }, 300);
+    }, 1500);
+
+  } else {
+    showNotification(data.message || 'Failed to update profile', 'error');
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
+  }
+})
+.catch(error => {
+  console.error('Error:', error);
+  showNotification('An error occurred. Please try again.', 'error');
+  submitBtn.innerHTML = originalText;
+  submitBtn.disabled = false;
+})
   .catch(error => {
     console.error('Error:', error);
     showNotification('An error occurred. Please try again.', 'error');
