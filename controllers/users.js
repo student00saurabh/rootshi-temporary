@@ -758,7 +758,6 @@ module.exports.resendOtp = async (req, res) => {
   }
 };
 
-// controllers/userController.js
 module.exports.profile = async (req, res) => {
   try {
     const id = req.user._id; // Assuming req.user is set by auth middleware
@@ -776,53 +775,6 @@ module.exports.profile = async (req, res) => {
 
     // If no courses found, use dummy data
     let displayCourses = enrolledCourses;
-    if (!enrolledCourses || enrolledCourses.length === 0) {
-      displayCourses = [
-        {
-          _id: "demo1",
-          title: "Ethical Hacking Fundamentals",
-          shortDescription:
-            "Learn the basics of ethical hacking and penetration testing",
-          teacher: {
-            name: "John Doe",
-            email: "john@example.com",
-          },
-          image: {
-            url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop",
-          },
-          students: [
-            {
-              user: id,
-              paidPrice: 2999,
-              enrolledAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-            },
-          ],
-          courceType: "ETHICAL HACKING",
-          price: 2999,
-        },
-        {
-          _id: "demo2",
-          title: "Web Development Bootcamp",
-          shortDescription: "Complete full-stack web development course",
-          teacher: {
-            name: "Jane Smith",
-            email: "jane@example.com",
-          },
-          image: {
-            url: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&h=300&fit=crop",
-          },
-          students: [
-            {
-              user: id,
-              paidPrice: 4999,
-              enrolledAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-            },
-          ],
-          courceType: "WEB DEV",
-          price: 4999,
-        },
-      ];
-    }
 
     // Dummy taught courses for teachers
     const taughtCourses =
@@ -893,6 +845,9 @@ module.exports.profile = async (req, res) => {
     res.redirect("/");
   }
 };
+
+// controllers/userController.js
+
 module.exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user._id;

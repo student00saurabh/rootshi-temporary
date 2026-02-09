@@ -83,7 +83,7 @@ module.exports.adminDashboard = async (req, res) => {
       recentUsers,
       recentActivities,
       moment: require("moment"),
-      csrfToken: req.csrfToken(),
+      // csrfToken: req.csrfToken(),
     });
   } catch (error) {
     console.error("Dashboard error:", error);

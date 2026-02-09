@@ -369,7 +369,10 @@
     </div>
     
     <form id="editForm" method="POST" action="/profile/update" class="p-6">
-      
+  
+      <% if(typeof csrfToken !== "undefined" && csrfToken) { %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% } %>
       <div class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name *</label>
@@ -463,6 +466,7 @@ function closeEditModal() {
 }
 
 // Form Submission with loading state
+  
 document.getElementById('editForm')?.addEventListener('submit', function(e) {
   e.preventDefault();
   
@@ -476,44 +480,34 @@ document.getElementById('editForm')?.addEventListener('submit', function(e) {
   // Get form data
   const formData = new FormData(this);
   
+  
   // Send POST request
- fetch(this.action, {
-  method: 'POST',
-  body: formData,
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest'
-  }
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-})
-.then(data => {        // ✅ directly use data
-  if (data.success) {
-
-    showNotification('Profile updated successfully!', 'success');
-
-    setTimeout(() => {
-      closeEditModal();
+  fetch(this.action, {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      showNotification('Profile updated successfully!', 'success');
+      
       setTimeout(() => {
-        window.location.reload();
-      }, 300);
-    }, 1500);
-
-  } else {
-    showNotification(data.message || 'Failed to update profile', 'error');
-    submitBtn.innerHTML = originalText;
-    submitBtn.disabled = false;
-  }
-})
-.catch(error => {
-  console.error('Error:', error);
-  showNotification('An error occurred. Please try again.', 'error');
-  submitBtn.innerHTML = originalText;
-  submitBtn.disabled = false;
-})
+        closeEditModal();
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
+      }, 1500);
+    } else {
+      showNotification(data.message || 'Failed to update profile', 'error');
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    }
+  })
   .catch(error => {
     console.error('Error:', error);
     showNotification('An error occurred. Please try again.', 'error');
