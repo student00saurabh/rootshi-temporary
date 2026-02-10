@@ -63,13 +63,13 @@
                     </div>
 
                     <!-- Description Section -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
                         <!-- Short Description -->
                         <div class="group">
                             <label for="shortDescription" class="block mb-3 font-semibold text-gray-200 group-hover:text-cyan-400 transition-colors">
                                 Short Description <span class="text-red-500">*</span>
                             </label>
-                            <textarea id="shortDescription" name="shortDescription" required rows="3"
+                            <textarea id="shortDescription" name="shortDescription" required rows=""
                                 placeholder="Brief overview for course listings (2-3 sentences)"
                                 class="w-full px-5 py-3.5 rounded-xl bg-gray-800/70 border border-gray-700 text-white 
                                        placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-2 
@@ -84,13 +84,13 @@
                             <label for="description" class="block mb-3 font-semibold text-gray-200 group-hover:text-cyan-400 transition-colors">
                                 Detailed Description
                             </label>
-                            <textarea id="description" name="description" rows="3"
+                            <textarea id="description" name="description" rows="6"
                                 placeholder="Comprehensive course description including objectives and outcomes"
                                 class="w-full px-5 py-3.5 rounded-xl bg-gray-800/70 border border-gray-700 text-white 
                                        placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-2 
                                        focus:ring-cyan-500/20 transition-all duration-300"></textarea>
                             <div class="mt-2 text-sm text-gray-400">
-                                <span id="desc-counter" class="font-mono">0/1000</span> characters
+                                <span id="desc-counter" class="font-mono">0/5000</span> characters
                             </div>
                         </div>
                     </div>
@@ -403,7 +403,7 @@
         // Character counter for description
         descInput.addEventListener('input', function() {
             const counter = document.getElementById('desc-counter');
-            counter.textContent = `${this.value.length}/1000`;
+            counter.textContent = `${this.value.length}/000`;
         });
 
         // Calculate discount percentage

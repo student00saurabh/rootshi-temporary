@@ -93,7 +93,7 @@ module.exports.showBlog = async (req, res) => {
     category: blog.category,
     _id: { $ne: blog._id }, // exclude current blog
     blocked: false,
-    isvalid: true,
+    // isvalid: true,
   })
     .populate("author")
     .limit(10);
