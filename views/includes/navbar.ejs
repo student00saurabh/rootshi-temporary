@@ -141,7 +141,7 @@
                     </div>
                 </div>
 
-                <!-- User Authentication Section -->
+                <!-- User Authentication Section (Desktop) -->
                 <% if (currUser) { %>
                     <!-- User is logged in - Profile Dropdown -->
                     <div class="relative group ml-4">
@@ -208,7 +208,7 @@
                                 <% } else if(currUser.role == "admin") { %>
                                    
                             <!-- User Header -->
-                             <div class="py-2 px-2 space-y-1">
+<div class="py-2 px-2 space-y-1">
 <!-- Admin Dropdown Menu -->
 <div class="py-2">
     <!-- Dashboard Section -->
@@ -334,8 +334,8 @@
             <p class="font-semibold">Logout</p>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Sign out of admin panel</p>
         </div>
-    </a>
-</div> -->
+    </a>-->
+</div> 
 </div>
 <% } %>
                             
@@ -365,7 +365,7 @@
             </div>
 
             <!-- Mobile Menu Button with Theme Toggle -->
-            <div class="lg:hidden flex items-center space-x-4">
+            <div class="lg:hidden flex items-center space-x-4 flex-shrink-0">
                 <!-- Mobile Theme Toggle -->
                 <button id="mobileThemeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 focus:outline-none">
                     <svg id="mobileSunIcon" class="w-6 h-6 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,7 +378,7 @@
                 </button>
                 
                 <button id="mobileMenuButton" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
