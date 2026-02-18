@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../models/user.js");
 const Contact = require("../models/contact.js");
 const Cources = require("../models/cources.js");
+const Certificate = require("../models/certification.js");
 const Subscriber = require("../models/subscriber.js");
 const { subscribe } = require("../controllers/others.js");
 
@@ -27,8 +28,10 @@ const initDB = async () => {
     //   email: "thecubicals123@gmail.com",
     // });
     // console.log("Admin user removed", users);
-    const subscribers = await Subscriber.find();
-    console.log(subscribers);
+    // const subscribers = await Subscriber.find();
+    // console.log(subscribers);
+    const result = await Certificate.deleteMany({});
+    console.log("Certificates removed:", result);
   } catch {
     console.log("Error in checking admin user");
   }

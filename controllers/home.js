@@ -14,7 +14,10 @@ module.exports.homePage = async (req, res, next) => {
       "teacher",
     );
 
-    const blogs = await Blog.find().populate("author").sort({ createdAt: -1 });
+    const blogs = await Blog.find()
+      .populate("author")
+      .sort({ createdAt: -1 })
+      .limit(6);
 
     res.render("rootshield/home.ejs", {
       totalUsers,
@@ -41,7 +44,10 @@ module.exports.index = async (req, res) => {
     const popularCourse = await Course.findOne({ isPopular: true }).populate(
       "teacher",
     );
-    const blogs = await Blog.find().populate("author").sort({ createdAt: -1 });
+    const blogs = await Blog.find()
+      .populate("author")
+      .sort({ createdAt: -1 })
+      .limit(6);
 
     res.render("rootshield/home.ejs", {
       totalUsers,

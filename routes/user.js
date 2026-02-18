@@ -3,7 +3,12 @@ const router = express.Router();
 const User = require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync");
 const passport = require("passport");
-const { saveRedirectUrl, isVerified, isLoggedIn } = require("../middleware.js");
+const {
+  saveRedirectUrl,
+  isVerified,
+  isLoggedIn,
+  isAdmin,
+} = require("../middleware.js");
 const multer = require("multer");
 const upload = multer();
 const userController = require("../controllers/users.js");
@@ -53,10 +58,37 @@ router.get(
   isLoggedIn,
   userController.enrollmentHistory,
 );
-router.get(
-  "/certificates/:certificateId/download",
+
+router.get("/my-courses", isLoggedIn, userController.myCourses);
+router.get("/certificates", isLoggedIn, userController.myCertificates);
+
+// Generate certificate SVG
+// router.get(
+//   "/certificates/:id/svg",
+//   isLoggedIn,
+//   userController.generateCertificateSVG,
+// );
+
+// In your routes file
+router.post(
+  "/certificate/issue",
   isLoggedIn,
-  userController.downloadCertificate,
+  isAdmin,
+  userController.issueCertificate,
+);
+
+// Download certificate as image
+router.get(
+  "/certificates/:id/download/image",
+  isLoggedIn,
+  userController.downloadCertificateImage,
+);
+
+// Download certificate as PDF
+router.get(
+  "/certificates/:id/download/pdf",
+  isLoggedIn,
+  userController.downloadCertificatePDF,
 );
 
 module.exports = router;

@@ -1,0 +1,410 @@
+<% layout("/layouts/boilerplate", {
+    title: 'My Courses - Zoopito',
+    description: 'View your enrolled courses and track your learning progress on Zoopito.',
+    pageStyles: `
+        .courses-gradient {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%);
+        }
+        
+        .course-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #38BDF8;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #38BDF8 0%, #22C55E 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: #38BDF8;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #38BDF8 0%, #22C55E 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .empty-state {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .continue-btn {
+            background: linear-gradient(135deg, #38BDF8 0%, #22C55E 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .continue-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+        }
+    `
+}) -%>
+
+<div class="min-h-screen courses-gradient py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                        <i class="fas fa-book-open text-blue-500"></i>
+                        My Courses
+                    </h1>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">
+                        Continue your learning journey and track your progress
+                    </p>
+                </div>
+                
+                <!-- Stats Overview -->
+                <div class="mt-4 md:mt-0 flex gap-4">
+                    <div class="stat-card rounded-lg px-4 py-3 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Total Courses</div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white"><%= enrolledCourses.length %></div>
+                    </div>
+                    <div class="stat-card rounded-lg px-4 py-3 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">In Progress</div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <% 
+                                let inProgress = enrolledCourses.filter(c => {
+                                    // You can add logic to determine if course is in progress
+                                    return true; // Placeholder
+                                }).length;
+                            %>
+                            <%= inProgress %>
+                        </div>
+                    </div>
+                    <div class="stat-card rounded-lg px-4 py-3 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Completed</div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <% 
+                                let completed = enrolledCourses.filter(c => {
+                                    // You can add logic to determine if course is completed
+                                    return false; // Placeholder
+                                }).length;
+                            %>
+                            <%= completed %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button class="filter-btn active px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    All Courses
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    In Progress
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    Completed
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <i class="fas fa-clock mr-2"></i>Recently Added
+                </button>
+            </div>
+        </div>
+
+        <!-- Courses Grid -->
+        <% if (enrolledCourses && enrolledCourses.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% enrolledCourses.forEach(course => { %>
+                    <!-- Course Card -->
+                    <div class="course-card bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+                        <!-- Course Image -->
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="<%= course.image?.url || '/images/default-course.jpg' %>" 
+                                 alt="<%= course.title %>"
+                                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                            
+                            <!-- Course Type Badge -->
+                            <div class="absolute top-4 left-4">
+                                <span class="px-3 py-1 text-xs font-semibold text-white bg-gradient-to-r from-blue-500 to-green-500 rounded-full">
+                                    <%= course.courceType.replace('_', ' ') %>
+                                </span>
+                            </div>
+                            
+                            <!-- Price Badge -->
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-1 text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300 rounded-full">
+                                    <i class="fas fa-tag mr-1"></i>
+                                    ₹<%= course.price %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Course Content -->
+                        <div class="p-6">
+                            <!-- Teacher Info -->
+                            <div class="flex items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-sm font-medium">
+                                            <%= course.teacher?.name?.charAt(0) || 'T' %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Instructor</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <%= course.teacher?.name || 'Unknown Teacher' %>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Course Title -->
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                                <%= course.title %>
+                            </h3>
+
+                            <!-- Short Description -->
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                                <%= course.shortDescription %>
+                            </p>
+
+                            <!-- Course Meta Info -->
+                            <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                <span>
+                                    <i class="far fa-clock mr-1"></i>
+                                    <%= course.duration || 'Self-paced' %> hours
+                                </span>
+                                <span>
+                                    <i class="far fa-calendar mr-1"></i>
+                                    <%= course.lounchedDate ? new Date(course.lounchedDate).toLocaleDateString() : 'Available' %>
+                                </span>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400">Progress</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">45%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-3">
+                                <a href="/courses/<%= course._id %>/continue" 
+                                   class="continue-btn flex-1 text-white px-4 py-2 rounded-lg text-sm font-medium text-center">
+                                    <i class="fas fa-play-circle mr-2"></i>
+                                    Continue
+                                </a>
+                                <a href="/courses/<%= course._id %>" 
+                                   class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <!-- Empty State -->
+            <div class="empty-state bg-white dark:bg-gray-800 rounded-2xl p-12 text-center border border-gray-200 dark:border-gray-700">
+                <div class="flex justify-center mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-book-open text-white text-4xl"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                    No Courses Yet
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+                    You haven't enrolled in any courses yet. Start your learning journey by exploring our course catalog.
+                </p>
+                <div class="flex gap-4 justify-center">
+                    <a href="/courses" 
+                       class="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200">
+                        <i class="fas fa-compass mr-2"></i>
+                        Browse Courses
+                    </a>
+                    <a href="/categories" 
+                       class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200">
+                        <i class="fas fa-filter mr-2"></i>
+                        Explore Categories
+                    </a>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Recommendations Section (if user has courses) -->
+        <% if (enrolledCourses && enrolledCourses.length > 0) { %>
+            <div class="mt-12">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <i class="fas fa-star text-yellow-400 mr-2"></i>
+                        Recommended for You
+                    </h2>
+                    <a href="/courses/recommended" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium">
+                        View All <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- You can loop through recommended courses here -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-all duration-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-code text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900 dark:text-white">Advanced Web Development</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">By John Doe</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add more recommendation items -->
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter buttons functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Here you can add logic to filter courses
+                // You can make an AJAX request or filter on client side
+                console.log('Filter clicked:', this.textContent.trim());
+            });
+        });
+
+        // Course card hover effects
+        const courseCards = document.querySelectorAll('.course-card');
+        
+        courseCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Progress animation
+        const progressBars = document.querySelectorAll('.progress-bar');
+        
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+    });
+
+    // Function to update course progress (you can call this when user completes lessons)
+    function updateCourseProgress(courseId, progress) {
+        const progressBar = document.querySelector(`[data-course-id="${courseId}"] .progress-bar`);
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+            
+            // Update progress text
+            const progressText = document.querySelector(`[data-course-id="${courseId}"] .progress-text`);
+            if (progressText) {
+                progressText.textContent = progress + '%';
+            }
+        }
+    }
+
+    // Search functionality (if you want to add search)
+    function searchCourses(query) {
+        const courses = document.querySelectorAll('.course-card');
+        
+        courses.forEach(course => {
+            const title = course.querySelector('h3').textContent.toLowerCase();
+            const description = course.querySelector('p').textContent.toLowerCase();
+            
+            if (title.includes(query.toLowerCase()) || description.includes(query.toLowerCase())) {
+                course.style.display = 'block';
+            } else {
+                course.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+<style>
+    /* Line clamp utility */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #38BDF8 0%, #22C55E 100%);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #0EA5E9 0%, #16A34A 100%);
+    }
+    
+    /* Dark mode scrollbar */
+    .dark ::-webkit-scrollbar-track {
+        background: #374151;
+    }
+</style>

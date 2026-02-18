@@ -3,6 +3,11 @@ const User = require("../models/user.js");
 const Cources = require("../models/cources.js");
 const bcrypt = require("bcrypt");
 const brevo = require("@getbrevo/brevo");
+const Certificate = require("../models/certification.js");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
+const { createCanvas } = require("canvas");
 
 // Load environment variables (only in development)
 if (process.env.NODE_ENV !== "production") {
@@ -1018,28 +1023,608 @@ module.exports.enrollmentHistory = async (req, res) => {
   }
 };
 
-module.exports.downloadCertificate = async (req, res) => {
-  try {
-    const { certificateId } = req.params;
-    const userId = req.user._id;
+// module.exports.downloadCertificate = async (req, res) => {
+//   try {
+//     const { certificateId } = req.params;
+//     const userId = req.user._id;
 
-    const certificate = await Certificate.findOne({
-      _id: certificateId,
-      user: userId,
-    }).populate("Cources", "title duration");
+//     const certificate = await Certificate.findOne({
+//       _id: certificateId,
+//       user: userId,
+//     }).populate("Cources", "title duration");
+
+//     if (!certificate) {
+//       req.flash("error", "Certificate not found");
+//       return res.redirect("/profile");
+//     }
+
+//     // Generate PDF certificate
+//     // You can use libraries like pdfkit or puppeteer here
+//     res.json({ success: true, certificate });
+//   } catch (err) {
+//     console.log(err);
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Failed to download certificate" });
+//   }
+// };
+
+module.exports.myCourses = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const enrolledCourses = await Cources.find({
+      "students.user": userId,
+    }).populate("teacher", "name email");
+    res.render("users/myCources.ejs", { enrolledCourses });
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Failed to load your courses");
+    res.redirect("/profile");
+  }
+};
+
+// controllers/certificateController.js
+
+module.exports.myCertificates = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = req.user;
+
+    // For regular users - get their certificates
+    const certificates = await Certificate.find({
+      student: userId,
+      isActive: true,
+    })
+      .populate("course", "title")
+      .populate("teacher", "name")
+      .sort("-issueDate")
+      .lean();
+
+    // For admin - get all users for dropdown
+    let allUsers = [];
+    let allCourses = [];
+
+    if (user.role === "admin") {
+      allUsers = await User.find({ role: "user" }).select("name email").lean();
+      allCourses = await Cources.find({ isActive: true })
+        .select("title")
+        .lean();
+    }
+
+    res.render("users/myCertificates", {
+      certificates,
+      allUsers,
+      allCourses,
+      user,
+      totalCertificates: certificates.length,
+    });
+  } catch (err) {
+    console.error("Error in myCertificates:", err);
+    req.flash("error", "Failed to load your certificates");
+    res.redirect("/profile");
+  }
+};
+
+// Admin: Issue certificate to student
+// Update the issueCertificate function to handle new fields
+module.exports.issueCertificate = async (req, res) => {
+  try {
+    const {
+      studentId,
+      courseId,
+      certificateType,
+      grade,
+      issueDate,
+      notes,
+      position,
+      department,
+      duration,
+      projectName,
+      companyName, // Add this - it's missing from your destructuring
+    } = req.body;
+
+    // Validate required fields
+    if (!studentId || !certificateType) {
+      req.flash("error", "Please select student and certificate type");
+      return res.redirect("/certificates");
+    }
+
+    // Validate based on certificate type
+    if (certificateType === "OFFERLETTER") {
+      if (!companyName || !position) {
+        req.flash(
+          "error",
+          "Please fill company name and position for offer letter",
+        );
+        return res.redirect("/certificates");
+      }
+    }
+
+    if (certificateType === "INTERNSHIP") {
+      if (!companyName || !position) {
+        req.flash(
+          "error",
+          "Please fill company name and position for internship",
+        );
+        return res.redirect("/certificates");
+      }
+    }
+
+    // Validate course certificates
+    if (
+      [
+        "WEB DEV",
+        "CYBERSECURITY",
+        "MACHINE LEARNING",
+        "DATA SCIENCE",
+        "ARTIFICIAL INTELLIGENCE",
+      ].includes(certificateType)
+    ) {
+      if (!courseId) {
+        req.flash("error", "Please select a course");
+        return res.redirect("/certificates");
+      }
+    }
+
+    // Validate performance/hackathon
+    if (certificateType === "PERFORMANCE" || certificateType === "HACKATHON") {
+      if (!projectName) {
+        req.flash(
+          "error",
+          `Please enter ${certificateType === "PERFORMANCE" ? "award category" : "event name"}`,
+        );
+        return res.redirect("/certificates");
+      }
+    }
+
+    // Get teacher (current admin)
+    const teacher = req.user._id;
+
+    // Check if student exists
+    const student = await User.findById(studentId);
+    if (!student) {
+      req.flash("error", "Student not found");
+      return res.redirect("/certificates");
+    }
+
+    // For course certificates, verify course exists
+    if (courseId) {
+      const course = await Cources.findById(courseId);
+      if (!course) {
+        req.flash("error", "Course not found");
+        return res.redirect("/certificates");
+      }
+    }
+
+    // Prepare certificate data based on type
+    const certificateData = {
+      teacher,
+      student: studentId,
+      certificateType,
+      issueDate: issueDate || new Date(),
+      note: notes,
+    };
+
+    // Add type-specific fields
+    if (
+      [
+        "WEB DEV",
+        "CYBERSECURITY",
+        "MACHINE LEARNING",
+        "DATA SCIENCE",
+        "ARTIFICIAL INTELLIGENCE",
+      ].includes(certificateType)
+    ) {
+      certificateData.course = courseId;
+      certificateData.grade = grade || "COMPLETED";
+    } else if (certificateType === "INTERNSHIP") {
+      // No `course` field for internship certificates
+      certificateData.position = position;
+      certificateData.duration = duration;
+      certificateData.note =
+        `Internship at ${companyName}. ${notes || ""}`.trim();
+    } else if (certificateType === "OFFERLETTER") {
+      // No `course` field for offer letters
+      certificateData.position = position;
+      certificateData.department = department;
+      certificateData.note =
+        `Offer letter from ${companyName}. ${notes || ""}`.trim();
+    } else if (certificateType === "PERFORMANCE") {
+      // No `course` field for performance certificates
+      certificateData.projectName = projectName;
+      certificateData.grade = grade || "EXCELLENT";
+    } else if (certificateType === "HACKATHON") {
+      // No `course` field for hackathon certificates
+      certificateData.projectName = projectName;
+      certificateData.grade = grade || "PARTICIPATION";
+    } else {
+      // OTHER type: only set `course` when provided
+      if (courseId) certificateData.course = courseId;
+      certificateData.grade = grade || "COMPLETED";
+    }
+
+    const certificate = new Certificate(certificateData);
+    await certificate.save();
+
+    req.flash("success", `Certificate issued successfully to ${student.name}`);
+    res.redirect("/certificates");
+  } catch (err) {
+    console.error("Error issuing certificate:", err);
+    req.flash("error", "Failed to issue certificate: " + err.message);
+    res.redirect("/certificates");
+  }
+};
+// Download certificate as image
+module.exports.downloadCertificateImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const certificate = await Certificate.findById(id)
+      .populate("student", "name")
+      .populate("course", "title")
+      .populate("teacher", "name");
 
     if (!certificate) {
       req.flash("error", "Certificate not found");
-      return res.redirect("/profile");
+      return res.redirect("/certificates");
     }
 
-    // Generate PDF certificate
-    // You can use libraries like pdfkit or puppeteer here
-    res.json({ success: true, certificate });
+    // Increment download count
+    certificate.downloadCount += 1;
+    await certificate.save();
+
+    // Generate and send SVG
+    const svg = generateCertificateSVG(certificate);
+
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${certificate.certificateType.toLowerCase().replace(" ", "-")}-certificate-${certificate.certificateId}.svg"`,
+    );
+    res.send(svg);
   } catch (err) {
-    console.log(err);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to download certificate" });
+    console.error("Error downloading certificate:", err);
+    req.flash("error", "Failed to download certificate");
+    res.redirect("/certificates");
   }
 };
+
+// Download certificate as PDF
+module.exports.downloadCertificatePDF = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const certificate = await Certificate.findById(id)
+      .populate("student", "name")
+      .populate("course", "title")
+      .populate("teacher", "name");
+
+    if (!certificate) {
+      req.flash("error", "Certificate not found");
+      return res.redirect("/certificates");
+    }
+
+    // Increment download count
+    certificate.downloadCount += 1;
+    await certificate.save();
+
+    // For now, redirect to SVG download (you can implement PDF later)
+    res.redirect(`/certificate/${id}/download/image`);
+  } catch (err) {
+    console.error("Error downloading certificate:", err);
+    req.flash("error", "Failed to download certificate");
+    res.redirect("/certificates");
+  }
+};
+
+// Helper function to generate certificate SVG with RootShield branding
+// Helper function to generate professional certificate SVG with embedded logo
+function generateCertificateSVG(cert) {
+  const studentName = cert.student?.name || "Student";
+  const courseName = cert.course?.title || "Course Completion";
+  const teacherName = cert.teacher?.name || "Instructor";
+  const date = new Date(cert.issueDate).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  // Certificate types with professional color schemes
+  const colors = {
+    // Course Certificates - Professional Blues
+    "WEB DEV": {
+      primary: "#2563EB", // Royal Blue
+      secondary: "#7C3AED", // Purple
+      accent: "#10B981", // Emerald
+      border: "#1E3A8A", // Dark Blue
+      text: "#1F2937", // Dark Gray
+    },
+    CYBERSECURITY: {
+      primary: "#DC2626", // Red
+      secondary: "#1E3A8A", // Dark Blue
+      accent: "#F59E0B", // Orange
+      border: "#991B1B", // Dark Red
+      text: "#1F2937",
+    },
+    "MACHINE LEARNING": {
+      primary: "#7C3AED", // Purple
+      secondary: "#DB2777", // Pink
+      accent: "#10B981", // Emerald
+      border: "#5B21B6", // Dark Purple
+      text: "#1F2937",
+    },
+    "DATA SCIENCE": {
+      primary: "#F59E0B", // Orange
+      secondary: "#059669", // Green
+      accent: "#3B82F6", // Blue
+      border: "#B45309", // Dark Orange
+      text: "#1F2937",
+    },
+    "ARTIFICIAL INTELLIGENCE": {
+      primary: "#6D28D9", // Purple
+      secondary: "#9333EA", // Light Purple
+      accent: "#F472B6", // Pink
+      border: "#4C1D95", // Deep Purple
+      text: "#1F2937",
+    },
+
+    // Professional Certificates - Green/Emerald Theme
+    INTERNSHIP: {
+      primary: "#065F46", // Dark Green
+      secondary: "#047857", // Green
+      accent: "#FBBF24", // Yellow
+      border: "#064E3B", // Deep Green
+      text: "#1F2937",
+    },
+    OFFERLETTER: {
+      primary: "#1E40AF", // Dark Blue
+      secondary: "#2563EB", // Blue
+      accent: "#F59E0B", // Orange
+      border: "#1E3A8A", // Navy
+      text: "#1F2937",
+    },
+    PERFORMANCE: {
+      primary: "#92400E", // Brown
+      secondary: "#B45309", // Orange-Brown
+      accent: "#FCD34D", // Light Yellow
+      border: "#78350F", // Dark Brown
+      text: "#1F2937",
+    },
+    HACKATHON: {
+      primary: "#6B21A8", // Purple
+      secondary: "#7E22CE", // Violet
+      accent: "#F59E0B", // Orange
+      border: "#4C1D95", // Deep Purple
+      text: "#1F2937",
+    },
+
+    // Default
+    OTHER: {
+      primary: "#2563EB",
+      secondary: "#7C3AED",
+      accent: "#10B981",
+      border: "#1E3A8A",
+      text: "#1F2937",
+    },
+  };
+
+  const typeColors = colors[cert.certificateType] || colors.OTHER;
+
+  // Determine certificate content based on type
+  let certificateTitle = "CERTIFICATE";
+  let subtitle = "OF COMPLETION";
+  let mainText = "for successfully completing";
+  let additionalDetails = "";
+
+  if (cert.certificateType === "INTERNSHIP") {
+    certificateTitle = "INTERNSHIP";
+    subtitle = "COMPLETION CERTIFICATE";
+    mainText = "for successfully completing the internship program as";
+    additionalDetails = cert.position ? ` ${cert.position}` : "";
+  } else if (cert.certificateType === "OFFERLETTER") {
+    certificateTitle = "OFFER LETTER";
+    subtitle = "OF APPOINTMENT";
+    mainText = "is hereby appointed to the position of";
+    additionalDetails = cert.position ? ` ${cert.position}` : "";
+  } else if (cert.certificateType === "PERFORMANCE") {
+    certificateTitle = "PERFORMANCE";
+    subtitle = "ACHIEVEMENT AWARD";
+    mainText = "is recognized for outstanding performance in";
+  } else if (cert.certificateType === "HACKATHON") {
+    certificateTitle = "HACKATHON";
+    subtitle = "PARTICIPATION CERTIFICATE";
+    mainText = "for active participation in";
+  }
+
+  // Convert logo to base64 (you can replace with your actual logo)
+  // For production, you might want to serve the logo from your static files
+  const logoSvg = `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="40" r="38" stroke="${typeColors.primary}" stroke-width="4" fill="white"/>
+    <text x="40" y="52" text-anchor="middle" font-family="Arial Black" font-size="24" fill="${typeColors.primary}">R</text>
+    <text x="40" y="68" text-anchor="middle" font-family="Arial" font-size="10" fill="#6B7280">SHIELD</text>
+  </svg>`;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Definitions for patterns and gradients -->
+  <defs>
+    <!-- Professional gradient background -->
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9FAFB"/>
+      <stop offset="1" stop-color="#F3F4F6"/>
+    </linearGradient>
+    
+    <!-- Border gradient -->
+    <linearGradient id="borderGradient" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="${typeColors.primary}"/>
+      <stop offset="0.5" stop-color="${typeColors.secondary}"/>
+      <stop offset="1" stop-color="${typeColors.accent}"/>
+    </linearGradient>
+    
+    <!-- Gold gradient for accents -->
+    <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700"/>
+      <stop offset="0.5" stop-color="#FBBF24"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    
+    <!-- Subtle pattern -->
+    <pattern id="pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 0 0 L 100 0 100 100 0 100 Z" fill="none" stroke="${typeColors.primary}" stroke-width="0.3" opacity="0.1"/>
+      <circle cx="50" cy="50" r="10" fill="${typeColors.primary}" opacity="0.05"/>
+    </pattern>
+    
+    <!-- Drop shadow filter -->
+    <filter id="shadow" x="-20" y="-20" width="1240" height="840">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.1"/>
+    </filter>
+    
+    <!-- Emboss effect -->
+    <filter id="emboss">
+      <feConvolveMatrix order="3" kernelMatrix="1 0 0 0 0.5 0 0 0 1"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative pattern overlay -->
+  <rect width="1200" height="800" fill="url(#pattern)"/>
+  
+  <!-- Outer border with gold accents -->
+  <rect x="30" y="30" width="1140" height="740" rx="40" stroke="url(#borderGradient)" stroke-width="3" fill="none"/>
+  
+  <!-- Inner decorative border -->
+  <rect x="50" y="50" width="1100" height="700" rx="30" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Corner decorations -->
+  <path d="M70 70 L120 70 L120 120" stroke="${typeColors.primary}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M1130 70 L1080 70 L1080 120" stroke="${typeColors.primary}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M70 730 L120 730 L120 680" stroke="${typeColors.primary}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M1130 730 L1080 730 L1080 680" stroke="${typeColors.primary}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Top decorative bar with gradient -->
+  <rect x="80" y="80" width="1040" height="8" fill="url(#goldGradient)" opacity="0.5" rx="4"/>
+  
+  <!-- Logo Section -->
+  <g transform="translate(140, 140)">
+    <!-- Logo circle -->
+    <circle cx="40" cy="40" r="38" fill="white" stroke="${typeColors.primary}" stroke-width="2"/>
+    
+    <!-- RootShield text logo -->
+    <!-- RootShield text logo -->
+    <image
+    href="https://rootshield.in/images/logo.png"
+    x="15"
+    y="15"
+    width="50"
+    height="50"
+    preserveAspectRatio="xMidYMid meet"
+/>
+    
+    <!-- Small decorative elements -->
+    <circle cx="20" cy="20" r="3" fill="${typeColors.primary}" opacity="0.3"/>
+    <circle cx="60" cy="20" r="3" fill="${typeColors.secondary}" opacity="0.3"/>
+    <circle cx="20" cy="60" r="3" fill="${typeColors.accent}" opacity="0.3"/>
+    <circle cx="60" cy="60" r="3" fill="${typeColors.primary}" opacity="0.3"/>
+  </g>
+  
+  <!-- Certificate type badge -->
+  <g transform="translate(900, 120)">
+    <rect x="0" y="0" width="220" height="40" rx="20" fill="${typeColors.primary}" opacity="0.1"/>
+    <text x="110" y="25" text-anchor="middle" font-family="Arial" font-size="14" fill="${typeColors.primary}" font-weight="bold">
+      ${cert.certificateType.replace("_", " ")}
+    </text>
+  </g>
+  
+  <!-- Main Title with gold accent -->
+  <text x="600" y="250" text-anchor="middle" font-family="Times New Roman, serif" font-size="58" font-weight="bold" fill="${typeColors.primary}">
+    ${certificateTitle}
+  </text>
+  
+  <text x="600" y="310" text-anchor="middle" font-family="Times New Roman, serif" font-size="30" fill="#6B7280" font-style="italic">
+    ${subtitle}
+  </text>
+  
+  <!-- Decorative line -->
+  <line x1="400" y1="340" x2="800" y2="340" stroke="url(#goldGradient)" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Presented to -->
+  <text x="600" y="400" text-anchor="middle" font-family="Arial" font-size="16" fill="#9CA3AF" letter-spacing="2">
+    THIS CERTIFICATE IS PROUDLY PRESENTED TO
+  </text>
+  
+  <!-- Student Name with gold underline -->
+  <text x="600" y="480" text-anchor="middle" font-family="Times New Roman, serif" font-size="52" font-weight="bold" fill="${typeColors.text}">
+    ${studentName}
+  </text>
+  <line x1="350" y1="500" x2="850" y2="500" stroke="url(#goldGradient)" stroke-width="3"/>
+  
+  <!-- Main text -->
+  <text x="600" y="550" text-anchor="middle" font-family="Arial" font-size="18" fill="#6B7280">
+    ${mainText}
+  </text>
+  
+  <!-- Course/Program Name with styling -->
+  <text x="600" y="610" text-anchor="middle" font-family="Times New Roman, serif" font-size="36" font-weight="bold" fill="${typeColors.secondary}">
+    ${courseName}${additionalDetails}
+  </text>
+  
+  <!-- Additional details line (if any) -->
+  ${cert.duration ? `<text x="600" y="650" text-anchor="middle" font-family="Arial" font-size="16" fill="#6B7280">Duration: ${cert.duration}</text>` : ""}
+  
+  <!-- Details line with grade and date -->
+  <text x="600" y="${cert.duration ? 680 : 650}" text-anchor="middle" font-family="Arial" font-size="14" fill="#9CA3AF">
+    ${cert.grade ? `Grade: ${cert.grade} • ` : ""}Issued: ${date}
+  </text>
+  
+  <!-- Signatures section with seals -->
+  <g transform="translate(200, 680)">
+    <line x1="0" y1="0" x2="150" y2="0" stroke="${typeColors.primary}" stroke-width="2"/>
+    <text x="75" y="25" text-anchor="middle" font-family="Arial" font-size="14" fill="#4B5563" font-weight="bold">
+      ${teacherName}
+    </text>
+    <text x="75" y="45" text-anchor="middle" font-family="Arial" font-size="12" fill="#9CA3AF">
+      Authorized Signatory
+    </text>
+    
+    <!-- Decorative seal -->
+    <circle cx="200" cy="-10" r="15" fill="none" stroke="${typeColors.primary}" stroke-width="1" opacity="0.3"/>
+    <circle cx="200" cy="-10" r="10" fill="none" stroke="${typeColors.secondary}" stroke-width="1" opacity="0.3"/>
+  </g>
+  
+  <g transform="translate(850, 680)">
+    <line x1="0" y1="0" x2="150" y2="0" stroke="${typeColors.primary}" stroke-width="2"/>
+    <text x="75" y="25" text-anchor="middle" font-family="Arial" font-size="14" fill="#4B5563" font-weight="bold">
+      RootShield
+    </text>
+    <text x="75" y="45" text-anchor="middle" font-family="Arial" font-size="12" fill="#9CA3AF">
+      Founder
+    </text>
+    
+    <!-- Decorative seal -->
+    <circle cx="-50" cy="-10" r="15" fill="none" stroke="${typeColors.primary}" stroke-width="1" opacity="0.3"/>
+    <circle cx="-50" cy="-10" r="10" fill="none" stroke="${typeColors.secondary}" stroke-width="1" opacity="0.3"/>
+  </g>
+  
+  <!-- Certificate ID and Verification (bottom) -->
+  <text x="150" y="740" font-family="Arial" font-size="9" fill="#121314">
+    Certificate ID: ${cert.certificateId}
+  </text>
+  <text x="1080" y="740" text-anchor="end" font-family="Arial" font-size="9" fill="#18181a">
+    verify at: https://rootshield.in/verify/${cert.verificationHash || cert.certificateId}
+  </text>
+  
+  <!-- Company info with gold border -->
+  
+  <text x="600" y="740" text-anchor="middle" font-family="Arial" font-size="11" fill="#4B5563">
+    www.rootshield.in • info@rootshield.in
+  </text>
+  
+  
+</svg>`;
+}
+// module.exports = {
+//   myCertificates: module.exports.myCertificates,
+//   issueCertificate: module.exports.issueCertificate,
+//   downloadCertificateImage: module.exports.downloadCertificateImage,
+//   downloadCertificatePDF: module.exports.downloadCertificatePDF,
+// };
