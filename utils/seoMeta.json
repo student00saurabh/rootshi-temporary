@@ -2,7 +2,7 @@
   "/": {
     "title": "RootShield | Secure Digital Solutions, Learning & Technology Platform",
     "description": "RootShield provides secure digital solutions, technology resources, and learning opportunities to help individuals and businesses grow in the modern digital ecosystem.",
-    "keywords": "rootshield, digital solutions platform, technology learning, cybersecurity awareness, developer resources, online tech platform, web development learning, digital innovation india, coding resources, secure technology tools, modern tech solutions, software learning platform"
+    "keywords": "rootshield, rootshield academy, cyber security best coaching, cyber training, security training, cyber security, security, ethical hacking, ejpt, oscp, cpent digital solutions platform, technology learning, cybersecurity awareness, developer resources, online tech platform, web development learning, digital innovation india, coding resources, secure technology tools, modern tech solutions, software learning platform"
   },
 
   "/login": {
@@ -18,13 +18,13 @@
   },
 
   "/courses": {
-    "title": "Technology Courses | Learn Skills with RootShield",
+    "title": "Courses | Learn Skills with RootShield",
     "description": "Explore curated technology and development courses designed to build real-world skills and advance your digital career.",
     "keywords": "technology courses online, coding learning platform, developer training, web development courses, programming skills learning, tech education india, digital skill building, rootshield courses"
   },
 
   "/about": {
-    "title": "About RootShield | Our Mission & Vision",
+    "title": "About Us| Our Mission & Vision",
     "description": "Learn about RootShield’s mission to empower digital growth through secure technology solutions, education, and innovation-driven development.",
     "keywords": "about rootshield, company mission vision, technology platform info, digital innovation team, tech startup india, cybersecurity driven solutions, platform background"
   },
