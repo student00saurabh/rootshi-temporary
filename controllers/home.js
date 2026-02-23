@@ -465,7 +465,7 @@ module.exports.enrollCourse = async (req, res) => {
 module.exports.viewCourse = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
-      .populate("teacher", "name email profileImage")
+      .populate("teacher", "name email mobile profileImage")
       .populate("students.user", "name email")
       .lean(); // Use lean() for better performance
 
