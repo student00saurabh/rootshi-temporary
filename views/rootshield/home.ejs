@@ -1,0 +1,945 @@
+<% layout("/layouts/boilerplate") -%>
+
+<!-- views/index.ejs -->
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <!-- Hero Section -->
+    <section class="relative pt-16 pb-20 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+            <div class="absolute bottom-0 right-0 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="text-center lg:text-left">
+                    <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                            Master Cybersecurity
+                        </span>
+                        <br>
+                        <span class="text-gray-900 dark:text-white">Build Secure Futures</span>
+                    </h1>
+                    
+                    <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl lg:max-w-none">
+                        Join India's premier cybersecurity and web development education platform. 
+                        Learn from industry experts and build skills that protect digital assets.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="/courses" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                            Explore Courses
+                        </a>
+                        <a href="/enroll" class="px-8 py-4 border-2 border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-semibold rounded-xl hover:bg-cyan-50 dark:hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300">
+                            Start Free Trial
+                        </a>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="mt-12 grid grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2"><%= totalUsers %></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Active Students</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2"><%= totalInstructors %></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Expert Instructors</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2"><%= totalCources %></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Available Cources</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Content - Hero Image/Illustration -->
+                <div class="relative">
+                    <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                        <!-- Decorative elements -->
+                        <div class="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl -rotate-12 shadow-xl"></div>
+                        <div class="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl rotate-12 shadow-xl"></div>
+                        
+                        <!-- Course card preview -->
+
+                         <!-- style="
+        background-image: url('popularCourse.image.url ');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat; -->
+    "
+
+                        <div class="bg-cyan-200/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 text-xs font-semibold rounded-full">
+                                    POPULAR
+                                </span>
+                                <span class="text-yellow-400 flex items-center">
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span class="ml-1">4.9</span>
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2"><%= popularCourse.title.length > 40?popularCourse.title.slice(0,40) + "...": popularCourse.title %></h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4"><%= popularCourse.shortDescription.length > 120?popularCourse.shortDescription.slice(0,120) + "...":popularCourse.shortDescription %></p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                                            <% if (popularCourse.teacher) { %>
+                                                <%= (popularCourse.teacher.name || popularCourse.teacher.username || 'U').charAt(0).toUpperCase() %>
+                                            <% } else { %>
+                                                <i class="fas fa-user"></i>
+                                            <% } %>
+                                        </div>
+                                        <div class="ml-2">
+                                            <p class="text-xs text-gray-700 dark:text-gray-300"><%= popularCourse.teacher.name %></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-500">Security Expert</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-cyan-600 dark:text-cyan-300 font-bold"><%= popularCourse.actualPrice %></span>
+                            </div>
+                            <div class="flex justify-end">
+                                <button
+                                    onclick="openEnrollModal('<%= popularCourse._id %>', '<%= popularCourse.actualPrice %>', '<%= popularCourse.title %>')"
+                                    class="m-2 px-4 py-2 rounded-xl
+                                        bg-gradient-to-r from-cyan-500 to-blue-600
+                                        text-white font-semibold">
+                                            Enroll Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Courses Section -->
+    <section class="py-10 bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 rounded-full text-sm font-semibold mb-4">
+                    TOP COURSES
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Featured <span class="text-cyan-600 dark:text-cyan-300">Courses</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Learn from industry experts with hands-on projects and real-world scenarios
+                </p>
+            </div>
+
+            
+            <!-- Courses Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+             <% cources.forEach(course => { %>
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-cyan-500/30 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                    <div class="mb-4 relative overflow-hidden rounded-xl">
+                        <div class="relative aspect-video bg-gradient-to-r from-blue-600/20 to-cyan-500/20 rounded-xl overflow-hidden">
+                            <img
+                                src="<%= course.image.url %>"
+                                alt="<%= course.title %>"
+                                class="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </div>
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 bg-cyan-800 text-cyan-200 dark:text-cyan-900 text-xs font-semibold rounded-full">
+                                <%= course.courceType %>
+                            </span>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
+                        <%= course.title.length > 45 ? course.title.slice(0,45) + "..." : course.title %>
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        <%= course.shortDescription.length > 120? course.shortDescription.slice(0,120) + "...": course.shortDescription %>
+                    </p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white">
+                                <span class="text-sm font-bold">
+                                    <% if (course.teacher) { %>
+                                        <%= (course.teacher.name || course.teacher.username || 'U').charAt(0).toUpperCase() %>
+                                    <% } else { %>
+                                        <i class="fas fa-user"></i>
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white"><%= course.teacher.name %></p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Security Architect</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-cyan-600 dark:text-cyan-300 font-bold text-lg">₹ <%= course.actualPrice %></div>
+                            <div class="text-gray-500 dark:text-gray-500 text-sm line-through">₹ <%= course.price %></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <%= course.duration %> Hours
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            120 Students
+                        </div>
+                    </div>
+                    <div class="flex w-full rounded-xl overflow-hidden">
+    
+    <!-- Left Side -->
+    <a href="/courses/<%= course._id %>" 
+       class="w-1/2 text-center py-3 
+              bg-gradient-to-r from-cyan-500 to-blue-600
+              text-cyan-200 dark:text-cyan-300 
+              font-semibold
+              hover:bg-cyan-50 dark:hover:bg-gray-700
+              transition">
+        View Details
+    </a>
+
+    <!-- Right Side -->
+    <button
+        onclick="openEnrollModal('<%= course._id %>', '<%= course.actualPrice %>', '<%= course.title %>')"
+        class="w-1/2 py-3 
+               bg-gradient-to-r from-cyan-500 to-blue-600
+               text-white font-semibold
+               hover:from-cyan-600 hover:to-blue-700
+               transition">
+        Enroll Now
+    </button>
+
+</div>
+                </div>
+            <% }) %>
+            </div>   
+
+            <div class="text-center mt-12">
+                <a href="/courses" class="inline-flex items-center px-6 py-3 border-2 border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-semibold rounded-xl hover:bg-cyan-50 dark:hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300">
+                    View All Courses
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+
+   <!-- ================= CYBERSECURITY CERTIFICATIONS ================= -->
+<section class="py-16 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+  <div class="max-w-7xl mx-auto px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-14">
+      <h2 class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
+        Cybersecurity Certifications We Focus On
+      </h2>
+      <p class="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+        Industry-recognized cybersecurity certifications trusted by global organizations and security professionals.
+      </p>
+    </div>
+
+    <!-- Marquee -->
+    <div class="relative overflow-hidden py-6">
+      <button id="prevCertBtn"
+        class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:scale-110 transition">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <button id="nextCertBtn"
+        class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:scale-110 transition">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+
+      <div class="overflow-hidden">
+        <div id="marqueeTrack" class="flex gap-14 items-center will-change-transform"></div>
+      </div>
+    </div>
+
+    <!-- Compact Contact CTA -->
+    <div class="mt-16 max-w-4xl mx-auto bg-gradient-to-r from-cyan-500 to-indigo-600 rounded-2xl p-6 md:p-8 shadow-xl">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 class="text-2xl font-semibold text-white">
+            Need Guidance for Cybersecurity Certifications?
+          </h3>
+          <p class="text-blue-100 text-sm mt-1">
+            Get expert advice on CEH, Security+, OSCP, CISSP & more.
+          </p>
+        </div>
+
+        <div class="flex gap-4">
+          <a href="https://wa.me/918707734001?text=Hi!%20I%20need%20guidance%20for%20cybersecurity%20certifications"
+             target="_blank"
+             class="px-5 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium transition">
+            WhatsApp
+          </a>
+
+          <a href="/contact"
+             class="px-5 py-3 rounded-xl bg-white text-blue-600 font-semibold hover:bg-blue-50 transition">
+            Contact
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= CONTACT MODAL ================= -->
+<div id="contactModal"
+  class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+  <div
+    class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl p-6 scale-95 opacity-0 transition-all">
+
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-white">
+        Cybersecurity Certification Inquiry
+      </h3>
+      <button onclick="closeContactModal()" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <form id="contactForm" class="space-y-4">
+      <input required placeholder="Full Name"
+        class="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-700 dark:border-gray-600">
+
+      <input type="email" required placeholder="Email Address"
+        class="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-700 dark:border-gray-600">
+
+      <select
+        class="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-700 dark:border-gray-600">
+        <option selected disabled>Select Certification</option>
+        <option>CEH (EC-Council)</option>
+        <option>CompTIA Security+</option>
+        <option>CompTIA CySA+</option>
+        <option>OSCP (OffSec)</option>
+        <option>CISSP (ISC²)</option>
+        <option>eJPT (INE)</option>
+      </select>
+
+      <button type="submit"
+        class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ================= LOGOS ================= */
+const certificationLogos = [
+  {
+    name: "CEH – EC-Council",
+    logo: "/images/dummy-ceh-certificate.svg"
+  },
+  {
+    name: "CompTIA Security+",
+    logo: "/images/dummy-security-plus-certificate.svg"
+  },
+  {
+    name: "CompTIA CySA+",
+    logo: "/images/dummy-cysa-certificate.svg"
+  },
+  {
+    name: "OSCP – OffSec",
+    logo: "/images/dummy-oscp-certificate.svg"
+  },
+  {
+    name: "CISSP – ISC²",
+    logo: "/images/dummy-cissp-certificate.svg"
+  },
+  {
+    name: "eJPT – INE",
+    logo: "/images/dummy-ejpt-certificate.svg"
+  }
+];
+
+const marqueeTrack = document.getElementById("marqueeTrack");
+let position = 0;
+
+/* Init */
+function initMarquee() {
+  [...certificationLogos, ...certificationLogos].forEach(c => {
+    const div = document.createElement("div");
+    div.className = "flex-shrink-0 text-center";
+    div.innerHTML = `
+      <div class="w-54 h-24 bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex items-center justify-center">
+        <img src="${c.logo}" alt="${c.name}" class="max-h-full object-contain">
+      </div>
+      <p class="text-sm mt-2 text-gray-600 dark:text-gray-400">${c.name}</p>
+    `;
+    marqueeTrack.appendChild(div);
+  });
+
+  setInterval(() => {
+    position -= 0.5;
+    if (Math.abs(position) > marqueeTrack.scrollWidth / 2) position = 0;
+    marqueeTrack.style.transform = `translateX(${position}px)`;
+  }, 16);
+}
+
+document.addEventListener("DOMContentLoaded", initMarquee);
+
+/* Buttons */
+prevCertBtn.onclick = () => position += 200;
+nextCertBtn.onclick = () => position -= 200;
+
+/* Modal */
+function openContactModal() {
+  contactModal.classList.remove("hidden");
+  contactModal.classList.add("flex");
+  setTimeout(() => {
+    contactModal.querySelector("div").classList.remove("scale-95", "opacity-0");
+  }, 10);
+}
+
+function closeContactModal() {
+  const box = contactModal.querySelector("div");
+  box.classList.add("scale-95", "opacity-0");
+  setTimeout(() => {
+    contactModal.classList.add("hidden");
+    contactModal.classList.remove("flex");
+  }, 200);
+}
+
+/* Submit */
+contactForm.onsubmit = e => {
+  e.preventDefault();
+  alert("Thank you! Our cybersecurity expert will contact you.");
+  closeContactModal();
+  contactForm.reset();
+};
+</script>
+
+
+
+    
+    <!-- Why Choose Us Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Why Choose <span class="text-cyan-600 dark:text-cyan-300">RootShield</span>?
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    We provide the best learning experience with industry-relevant curriculum and expert guidance
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="text-center p-8 bg-white dark:bg-gray-800/30 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-cyan-500/50 transition-all duration-300 group">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Expert Instructors</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Learn from industry professionals with 4+ years of real-world experience
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="text-center p-8 bg-white dark:bg-gray-800/30 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-cyan-500/50 transition-all duration-300 group">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Job Guarantee</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        75% placement rate with our extensive industry network and career support
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="text-center p-8 bg-white dark:bg-gray-800/30 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-cyan-500/50 transition-all duration-300 group">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Hands-on Labs</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Real-world projects and virtual labs for practical learning experience
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="text-center p-8 bg-white dark:bg-gray-800/30 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-cyan-500/50 transition-all duration-300 group">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Lifetime Access</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Get lifetime access to course materials and future updates
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Student <span class="text-cyan-600 dark:text-cyan-300">Success Stories</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Hear from our students who transformed their careers with RootShield
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl">
+                            AS
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white">Aarav Sharma</h4>
+                            <p class="text-cyan-600 dark:text-cyan-300 text-sm">Security Analyst @CyberSafe</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 italic mb-6">
+                        "RootShield's Ethical Hacking course transformed my career. The hands-on labs and expert guidance helped me land a job within 2 months of completion!"
+                    </p>
+                    <div class="flex text-yellow-400">
+                        ★★★★★
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
+                            PM
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white">Priya Mehta</h4>
+                            <p class="text-cyan-600 dark:text-cyan-300 text-sm">Full Stack Developer @TechCorp</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 italic mb-6">
+                        "The Full Stack Development program was comprehensive and industry-focused. The project-based approach gave me the confidence to build real applications."
+                    </p>
+                    <div class="flex text-yellow-400">
+                        ★★★★★
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-xl">
+                            RK
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white">Rohan Kapoor</h4>
+                            <p class="text-cyan-600 dark:text-cyan-300 text-sm">Penetration Tester @SecureNet</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 italic mb-6">
+                        "As a career switcher, the Penetration Testing course gave me the exact skills needed in the industry. The certification was recognized by my employer."
+                    </p>
+                    <div class="flex text-yellow-400">
+                        ★★★★★
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:via-gray-900 dark:to-cyan-900/30 relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+        </div>
+
+        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+                Ready to Start Your <span class="text-cyan-600 dark:text-cyan-300">Cybersecurity</span> Journey?
+            </h2>
+            <p class="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                Join hundreds of students who have transformed their careers with RootShield. 
+                No prior experience required.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <a href="/enroll"
+                        class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-xl hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                            Enroll Now - 30% Off
+                    </a>
+                <!-- <a href="/demo" class="px-8 py-4 border-2 border-cyan-500/50 text-cyan-600 dark:text-cyan-300 font-semibold rounded-xl hover:bg-cyan-50 dark:hover:bg-cyan-500/10 transition-all duration-300">
+                    Book Free Demo Class
+                </a> -->
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">24/7</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Support</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">100+</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Learning Hours</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">₹0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">EMI Options</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">7-Day</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Money Back</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog/News Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                        Latest <span class="text-cyan-600 dark:text-cyan-300">Insights</span>
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400">Stay updated with cybersecurity trends and tips</p>
+                </div>
+                <a href="/blogs" class="text-cyan-600 dark:text-cyan-300 hover:text-cyan-500 dark:hover:text-cyan-200 font-medium flex items-center">
+                    View All Articles
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+            </div>
+
+
+            <% if (blogs.length === 0) { %>
+            <p class="text-center text-gray-500 dark:text-gray-400 text-lg">
+                No blogs found. Please check back later.
+            </p>
+        <% } else { %>
+            <div class="grid md:grid-cols-3 gap-8">
+                <% blogs.forEach(blog => { %>
+                    <article class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-cyan-500/30 transition-all duration-300 hover:-translate-y-2">
+                        
+                        <% if(blog.image && blog.image.url){ %>
+                        <div class="aspect-video bg-gradient-to-r from-blue-600/20 to-cyan-500/20 relative">
+                            <img src="<%= blog.image.url %>" alt="<%= blog.title %>" class="absolute inset-0 w-full h-full object-cover"/>
+                        </div>
+                        <% } else { %>
+                        <div class="aspect-video bg-gradient-to-r from-gray-300/20 to-gray-400/20 flex items-center justify-center text-gray-500">
+                            No Image
+                        </div>
+                        <% } %>
+
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                <% if(blog.category){ %>
+                                <span class="px-3 py-1 bg-blue-500/20 text-blue-600 dark:text-blue-300 rounded-full mr-3">
+                                    <%= blog.category %>
+                                </span>
+                                <% } %>
+                                <span><%= blog.createdAt.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+                            </div>
+
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
+                                <%= blog.title.length > 50? blog.title.slice(0,50) + "...": blog.title %>
+                            </h3>
+
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">
+                                <%= blog.shortdescription.length > 120 ? blog.shortdescription.slice(0,120) + "..." : blog.shortdescription %>
+                            </p>
+
+                            <a href="/blogs/<%= blog._id %>" class="text-cyan-600 dark:text-cyan-300 hover:text-cyan-500 dark:hover:text-cyan-200 font-medium inline-flex items-center">
+                                Read More
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+                <% }) %>
+
+                
+            </div>
+        <% } %>
+        </div>
+    </section>
+</div>
+
+<!-- Custom Styles for this page -->
+<style>
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Gradient text animation */
+    .gradient-text {
+        background: linear-gradient(90deg, #22d3ee, #3b82f6, #22d3ee);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient 3s linear infinite;
+    }
+    
+    @keyframes gradient {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    /* Fade-in animation for sections */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    
+    /* Card hover effects */
+    .course-card {
+        transition: all 0.3s ease;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark .course-card:hover {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Testimonial card styling */
+    .testimonial-card {
+        position: relative;
+    }
+    
+    .testimonial-card::before {
+        content: '"';
+        position: absolute;
+        top: -20px;
+        left: 20px;
+        font-size: 80px;
+        color: rgba(6, 182, 212, 0.2);
+        font-family: serif;
+        line-height: 1;
+    }
+</style>
+
+<!-- JavaScript for animations -->
+<script>
+    // Add scroll animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeInUp');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe sections for animation
+        document.querySelectorAll('section > div > *').forEach((el) => {
+            observer.observe(el);
+        });
+        
+        // Simple counter animation for stats
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target + (element.textContent.includes('+') ? '+' : '');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start) + (element.textContent.includes('+') ? '+' : '');
+                }
+            }, 16);
+        }
+        
+        // Trigger counter animation when stats are visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stats = document.querySelectorAll('.text-3xl.font-bold.text-gray-900, .text-3xl.font-bold.text-white');
+                    stats.forEach(stat => {
+                        const text = stat.textContent;
+                        const value = parseInt(text);
+                        if (!isNaN(value)) {
+                            animateCounter(stat, value);
+                        }
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        const statsSection = document.querySelector('.pt-24.pb-32');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+        
+        // Theme persistence
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                // Theme toggle is handled in navbar.js
+                // This ensures the home page adapts to theme changes
+            });
+        }
+        
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (currentTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    });
+</script>
+
+<div id="enrollModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-lg p-6 relative">
+
+    <!-- Close -->
+    <button onclick="closeEnrollModal()" class="absolute top-3 right-3 text-gray-500">✕</button>
+
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      Enroll in <span id="enrolmentCourceName"></span>
+    </h2>
+
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+  You can either fill out the form to enroll in this course,  
+  or contact us via WhatsApp or the contact page for enrollment assistance.  
+  If you have any doubts or questions, feel free to reach out to us.
+</p>
+
+    <!-- FORM -->
+    <form method="POST" action="/enroll" class="space-y-4">
+
+      <input type="hidden" name="courseId" id="courseId">
+      <input type="hidden" name="paidPrice" id="paidPrice">
+
+      <!-- Name -->
+      <input
+        type="text"
+        name="name"
+        value="<%= currUser ? currUser.name : '' %>"
+        required
+        placeholder="Your Name"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      />
+
+      <!-- Email -->
+      <input
+        type="email"
+        name="email"
+        value="<%= currUser ? currUser.email : '' %>"
+        required
+        placeholder="Email Address"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      />
+
+      <!-- Mobile -->
+      <input
+        type="tel"
+        name="mobile"
+        value="<%= currUser && currUser.mobile ? currUser.mobile : '' %>"
+        required
+        placeholder="Mobile Number"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      />
+
+      <!-- Description -->
+      <textarea
+        name="description"
+        placeholder="Any doubt or message (optional)"
+        class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 dark:text-white"
+      ></textarea>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold">
+        Enroll Now
+      </button>
+    </form>
+
+    <!-- CONTACT OPTIONS -->
+    <div class="mt-4 flex justify-between text-sm">
+      <a
+        href="https://wa.me/91XXXXXXXXXX"
+        target="_blank"
+        class="text-green-600 font-semibold"
+      >
+        WhatsApp
+      </a>
+
+      <a
+        href="/contact"
+        class="text-cyan-600 font-semibold"
+      >
+        Contact Us
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+  function openEnrollModal(courseId, price, courceName) {
+    document.getElementById("courseId").value = courseId;
+    document.getElementById("paidPrice").value = price;
+    document.getElementById("enrolmentCourceName").innerText = courceName;
+    document.getElementById("enrollModal").classList.remove("hidden");
+    document.getElementById("enrollModal").classList.add("flex");
+  }
+
+  function closeEnrollModal() {
+    document.getElementById("enrollModal").classList.add("hidden");
+  }
+</script>
+
+
