@@ -510,7 +510,17 @@ module.exports.viewCourse = async (req, res) => {
     const dynamicMeta = {
       title: course.title + " | RootShield Courses",
       description: course.shortDescription,
-      // keywords: course.keywords,
+      keywords:
+        course.courceType +
+        ", " +
+        course.title +
+        ", " +
+        course.shortDescription +
+        ", " +
+        course.teacher.name +
+        " best cybersecurity course, Best academy for cybersecurity, " +
+        course.courceType +
+        " course online",
       image: course.image.url,
     };
 
