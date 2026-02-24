@@ -511,7 +511,7 @@ module.exports.viewCourse = async (req, res) => {
       title: course.title + " | RootShield Courses",
       description: course.shortDescription,
       // keywords: course.keywords,
-      image: course.thumbnail,
+      image: course.image,
     };
 
     res.render("rootshield/viewCourse.ejs", {
