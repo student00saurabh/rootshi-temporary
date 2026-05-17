@@ -1,0 +1,61 @@
+{
+  "/": {
+    "title": "RootShield | Secure Digital Solutions, Learning & Technology Platform",
+    "description": "RootShield provides secure digital solutions, technology resources, and learning opportunities to help individuals and businesses grow in the modern digital ecosystem.",
+    "keywords": "rootshield, rootshield academy, cyber security best coaching, cyber training, security training, cyber security, security, ethical hacking, ejpt, oscp, cpent digital solutions platform, technology learning, cybersecurity awareness, developer resources, online tech platform, web development learning, digital innovation india, coding resources, secure technology tools, modern tech solutions, software learning platform"
+  },
+
+  "/login": {
+    "title": "Login | Access Your RootShield Account",
+    "description": "Sign in to your RootShield account to access personalized dashboards, resources, courses, and secure digital services.",
+    "keywords": "rootshield login, user sign in, secure account access, platform login portal, technology dashboard login, user authentication page, secure login india"
+  },
+
+  "/signup": {
+    "title": "Create Account | Join RootShield Platform",
+    "description": "Register on RootShield to explore courses, digital tools, and innovative technology resources designed for learners and professionals.",
+    "keywords": "rootshield signup, create user account, join tech platform, developer registration, online learning signup, technology platform registration, secure account creation"
+  },
+
+  "/courses": {
+    "title": "Courses | Learn Skills with RootShield",
+    "description": "Explore curated technology and development courses designed to build real-world skills and advance your digital career.",
+    "keywords": "technology courses online, coding learning platform, developer training, web development courses, programming skills learning, tech education india, digital skill building, rootshield courses"
+  },
+
+  "/about": {
+    "title": "About Us| Our Mission & Vision",
+    "description": "Learn about RootShield’s mission to empower digital growth through secure technology solutions, education, and innovation-driven development.",
+    "keywords": "about rootshield, company mission vision, technology platform info, digital innovation team, tech startup india, cybersecurity driven solutions, platform background"
+  },
+
+  "/contact": {
+    "title": "Contact RootShield | Get Support & Connect With Us",
+    "description": "Reach out to RootShield for support, collaboration, or inquiries related to our digital services and learning resources.",
+    "keywords": "contact rootshield, support request, business inquiry, platform contact page, technical assistance, connect with tech team, customer support india"
+  },
+
+  "/blogs": {
+    "title": "Technology Blogs | Insights, Guides & Updates",
+    "description": "Read insightful blogs on technology trends, development guides, cybersecurity awareness, and digital transformation topics.",
+    "keywords": "technology blog articles, coding guides, cybersecurity blogs, programming tutorials, digital trends insights, developer knowledge hub, tech articles india"
+  },
+
+  "/careers": {
+    "title": "Careers at RootShield | Join Our Team",
+    "description": "Explore career opportunities at RootShield and contribute to building innovative digital solutions and technology platforms.",
+    "keywords": "rootshield careers, tech job opportunities, join startup team, developer hiring, software careers india, innovation jobs, tech company recruitment"
+  },
+
+  "/privacy": {
+    "title": "Privacy Policy | RootShield Data Protection",
+    "description": "Understand how RootShield collects, uses, and protects your data while ensuring transparency and user privacy.",
+    "keywords": "privacy policy rootshield, user data protection, platform privacy terms, digital data security, personal data handling, privacy compliance"
+  },
+
+  "/terms": {
+    "title": "Terms & Conditions | RootShield Platform Usage",
+    "description": "Review the terms governing the use of RootShield services, platform access, and user responsibilities.",
+    "keywords": "terms and conditions rootshield, user agreement, platform usage policy, service terms india, website legal terms, digital platform rules"
+  }
+}

@@ -1,0 +1,13 @@
+<svg width="200" height="60" viewBox="0 0 200 60"
+	xmlns="http://www.w3.org/2000/svg">
+	<rect width="200" height="60" rx="8" fill="#f0fdf4"/>
+	<rect x="15" y="12" width="170" height="36" rx="4" fill="#059669"/>
+	<text x="100" y="32" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+        CySA+
+	</text>
+	<text x="100" y="50" text-anchor="middle" fill="#065f46" font-family="Arial, sans-serif" font-size="11">
+        Cybersecurity Analyst
+	</text>
+	<path d="M40 22 L45 22 L43 26 L38 26 Z" fill="white" opacity="0.8"/>
+	<path d="M160 22 L155 22 L157 26 L162 26 Z" fill="white" opacity="0.8"/>
+</svg>

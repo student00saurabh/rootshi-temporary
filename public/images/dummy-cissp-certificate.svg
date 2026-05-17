@@ -1,0 +1,13 @@
+<svg width="200" height="60" viewBox="0 0 200 60"
+	xmlns="http://www.w3.org/2000/svg">
+	<rect width="200" height="60" rx="8" fill="#f8fafc" stroke="#9333ea" stroke-width="2"/>
+	<rect x="20" y="15" width="160" height="30" rx="4" fill="#9333ea"/>
+	<text x="100" y="33" text-anchor="middle" fill="white" font-family="Georgia, serif" font-size="18" font-weight="bold">
+        CISSP
+	</text>
+	<text x="100" y="52" text-anchor="middle" fill="#6b21a8" font-family="Georgia, serif" font-size="10">
+        Security Leadership Program
+	</text>
+	<path d="M25 40 L35 40 L30 35 Z" fill="#a78bfa"/>
+	<path d="M175 40 L165 40 L170 35 Z" fill="#a78bfa"/>
+</svg>

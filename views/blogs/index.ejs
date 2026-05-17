@@ -1,0 +1,419 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 py-12 sm:py-16">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <% if (!cat && !search && allBlogs.length > 0) { %>
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+            Discover Inspiring Blogs
+          </h1>
+          <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+            Dive into a wide range of articles curated by students, educators, and industry professionals.
+            Learn, grow, and stay updated with thought-provoking content from diverse domains.
+          </p>
+        <% } else if(allBlogs.length == 0) { %>
+          <h1 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+            No Results Found
+          </h1>
+          <p class="text-lg text-blue-100">
+            We couldn't find any blogs matching your search. Try different keywords or explore categories.
+          </p>
+        <% } else if(search) { %>
+          <h1 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Search Results for "<%= search %>"
+          </h1>
+          <p class="text-lg text-blue-100">
+            Found <%= allBlogs.length %> blog<%= allBlogs.length > 1 ? 's' : '' %> matching your query
+          </p>
+        <% } else { %>
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+            <%= cat %> Blogs
+          </h1>
+          <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+            Stay ahead with trending insights, tutorials, and discussions in <%= cat %>.
+            Curated content designed to inspire and inform.
+          </p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Admin Controls -->
+    <% if (currUser && currUser.role === 'admin') { %>
+      <div class="flex justify-between items-center mb-8">
+        <div class="text-sm text-gray-600">
+          <i class="fas fa-user-shield mr-2"></i>
+          Admin Panel
+        </div>
+        <a 
+          href="/blogs/new" 
+          class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        >
+          <i class="fas fa-plus-circle mr-2"></i>
+          Add New Blog
+        </a>
+      </div>
+    <% } %>
+
+    <!-- Category Filter -->
+    <div class="mb-10">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Browse by Category</h3>
+      <div class="flex overflow-x-auto pb-4 space-x-3 scrollbar-hide">
+        <!-- All -->
+        <a href="/blogs"
+           class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 <%= !cat ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
+          All
+        </a>
+        
+        <!-- Categories -->
+        <% const categories = [
+          { name: 'Technology', color: 'bg-gray-800', hover: 'hover:bg-gray-700' },
+          { name: 'Programming', color: 'bg-gray-600', hover: 'hover:bg-gray-500' },
+          { name: 'Web Development', color: 'bg-green-600', hover: 'hover:bg-green-500' },
+          { name: 'Cyber Security', color: 'bg-yellow-500', hover: 'hover:bg-yellow-400' },
+          { name: 'Machine Learning', color: 'bg-blue-500', hover: 'hover:bg-blue-400' },
+          { name: 'Artificial Intelligence', color: 'bg-red-500', hover: 'hover:bg-red-400' },
+          { name: 'Data Science', color: 'bg-purple-600', hover: 'hover:bg-purple-500' },
+          { name: 'Startups', color: 'bg-indigo-600', hover: 'hover:bg-indigo-500' },
+          { name: 'Digital Marketing', color: 'bg-emerald-600', hover: 'hover:bg-emerald-500' },
+          { name: 'Jobs & Careers', color: 'bg-amber-500', hover: 'hover:bg-amber-400' },
+          { name: 'Education', color: 'bg-pink-500', hover: 'hover:bg-pink-400' },
+          { name: 'Others', color: 'bg-cyan-500', hover: 'hover:bg-cyan-400' },
+          
+        ]; %>
+        
+        <% categories.forEach(category => { %>
+          <a href="/blogs?category=<%= category.name %>"
+             class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 <%= cat === category.name ? category.color + ' text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
+            <%= category.name.replace(' & ', ' & ').replace('Advertising', 'Ads & Marketing').replace('Jobs', 'Jobs & Careers').replace('Life Story', 'Life Stories') %>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Search Results Info -->
+    <% if (search && allBlogs.length > 0) { %>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8">
+        <div class="flex items-center">
+          <i class="fas fa-search text-blue-600 mr-3 text-lg"></i>
+          <div>
+            <p class="text-blue-800 font-medium">
+              Showing <%= allBlogs.length %> result<%= allBlogs.length > 1 ? 's' : '' %> for "<%= search %>"
+            </p>
+            <p class="text-blue-600 text-sm mt-1">
+              Refine your search or explore categories for more specific content
+            </p>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Blog Grid -->
+    <% if (allBlogs.length > 0) { %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <% allBlogs.forEach(blog => { %>
+          <div class="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+            <!-- Image Container -->
+            <div class="relative overflow-hidden h-48 sm:h-56">
+              <img 
+                src="<%= (blog.image && blog.image.url) ? blog.image.url : '/images.png' %>" 
+                alt="<%= blog.title %>"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              >
+              <!-- Category Badge -->
+              <div class="absolute top-4 left-4">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-800 shadow-sm">
+                  <%= blog.category %>
+                </span>
+              </div>
+              <!-- Gradient Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+
+            <!-- Blog Content -->
+            <div class="p-5 sm:p-6">
+              <!-- Date -->
+              <div class="flex items-center text-sm text-gray-500 mb-3">
+                <i class="far fa-calendar-alt mr-2"></i>
+                <% if(!blog.updatedAt){ %>
+                  <%= new Date(blog.createdAt).toLocaleDateString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  }) %>
+                <% } else { %>
+                  <%= new Date(blog.updatedAt).toLocaleDateString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  }) %>
+                <% } %>
+              </div>
+
+              <!-- Title -->
+              <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                <a href="/blogs/<%= blog.id && blog.id.trim() !== '' ? blog.id : blog._id %>">
+                  <%= blog.title %>
+                </a>
+              </h3>
+
+              <!-- Description -->
+              <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                <%= blog.shortdescription.length > 120 ? blog.shortdescription.substring(0, 120) + '...' : blog.shortdescription %>
+              </p>
+
+              <!-- Footer -->
+              <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                <!-- Author -->
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium mr-3">
+                    <%= (blog.author.name || blog.author.username || 'A').charAt(0).toUpperCase() %>
+                  </div>
+                  <span class="text-sm text-gray-700">
+                    <%= blog.author.name || blog.author.username %>
+                  </span>
+                </div>
+
+                <!-- Read More -->
+                <a href="/blogs/<%= blog.id && blog.id.trim() !== '' ? blog.id : blog._id %>" 
+                   class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors group/link">
+                  Read More
+                  <i class="fas fa-arrow-right ml-2 group-hover/link:translate-x-1 transition-transform"></i>
+                </a>
+              </div>
+
+              <!-- Admin Actions -->
+              <% if (currUser && currUser.role === 'admin') { %>
+                <div class="flex space-x-2 mt-4 pt-4 border-t border-gray-100">
+                  <a href="/blogs/<%= blog._id %>/edit" 
+                     class="flex-1 text-center py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-edit mr-1"></i> Edit
+                  </a>
+                  <form action="/blogs/<%= blog._id %>?_method=DELETE" 
+                        method="POST" 
+                        class="flex-1"
+                        onsubmit="return confirm('Are you sure you want to delete this blog?');">
+                    <button type="submit" 
+                            class="w-full py-1.5 text-xs font-medium bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                      <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                  </form>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else if (cat || search) { %>
+      <!-- No Results -->
+      <div class="text-center py-16">
+        <div class="inline-block p-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl mb-6">
+          <i class="fas fa-search text-5xl text-gray-400"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-700 mb-3">
+          No Blogs Found
+        </h3>
+        <p class="text-gray-600 max-w-md mx-auto mb-8">
+          We couldn't find any blogs matching your criteria. Try adjusting your search or browse all categories.
+        </p>
+        <a href="/blogs" 
+           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300">
+          <i class="fas fa-redo mr-2"></i> View All Blogs
+        </a>
+      </div>
+    <% } %>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="mt-12 flex flex-col items-center">
+        <div class="flex items-center space-x-2 mb-4">
+          <!-- Previous -->
+          <a href="?page=<%= currentPage - 1 %><%= cat ? '&category=' + cat : '' %><%= search ? '&search=' + search : '' %>"
+             class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors <%= currentPage === 1 ? 'opacity-50 cursor-not-allowed' : '' %>"
+             <%= currentPage === 1 ? 'onclick="return false;"' : '' %>>
+            <i class="fas fa-chevron-left mr-2"></i> Previous
+          </a>
+
+          <!-- Page Numbers -->
+          <div class="flex items-center space-x-1">
+            <% 
+              const delta = 2;
+              let range = [];
+              for (let i = Math.max(1, currentPage - delta); i <= Math.min(totalPages, currentPage + delta); i++) {
+                range.push(i);
+              }
+            %>
+
+            <% if (range[0] > 1) { %>
+              <a href="?page=1<%= cat ? '&category=' + cat : '' %><%= search ? '&search=' + search : '' %>"
+                 class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                1
+              </a>
+              <% if (range[0] > 2) { %>
+                <span class="px-2 text-gray-400">...</span>
+              <% } %>
+            <% } %>
+
+            <% range.forEach(page => { %>
+              <a href="?page=<%= page %><%= cat ? '&category=' + cat : '' %><%= search ? '&search=' + search : '' %>"
+                 class="w-10 h-10 flex items-center justify-center rounded-xl font-medium transition-all duration-300 <%= page === currentPage ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'border border-gray-300 text-gray-700 hover:bg-gray-50' %>">
+                <%= page %>
+              </a>
+            <% }) %>
+
+            <% if (range[range.length - 1] < totalPages) { %>
+              <% if (range[range.length - 1] < totalPages - 1) { %>
+                <span class="px-2 text-gray-400">...</span>
+              <% } %>
+              <a href="?page=<%= totalPages %><%= cat ? '&category=' + cat : '' %><%= search ? '&search=' + search : '' %>"
+                 class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                <%= totalPages %>
+              </a>
+            <% } %>
+          </div>
+
+          <!-- Next -->
+          <a href="?page=<%= currentPage + 1 %><%= cat ? '&category=' + cat : '' %><%= search ? '&search=' + search : '' %>"
+             class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors <%= currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : '' %>"
+             <%= currentPage === totalPages ? 'onclick="return false;"' : '' %>>
+            Next <i class="fas fa-chevron-right ml-2"></i>
+          </a>
+        </div>
+
+        <!-- Page Info -->
+        <p class="text-sm text-gray-600">
+          Page <%= currentPage %> of <%= totalPages %> • <%= totalBlogs %> total blogs
+        </p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Call to Action -->
+  <% if (!cat && !search && allBlogs.length > 0) { %>
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 mt-12 py-12">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+          Want to Share Your Knowledge?
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto mb-8">
+          Join our community of writers and share your insights, experiences, and expertise with thousands of readers.
+        </p>
+        <a href="/contact" 
+           class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          <i class="fas fa-pen-alt mr-2"></i> Write for Us
+        </a>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<!-- Custom Styles -->
+<style>
+/* Hide scrollbar for category filter */
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth hover transitions */
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
+
+/* Gradient border effect for cards */
+
+.bg-white::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  border-radius: 1rem;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.bg-white:hover::before {
+  opacity: 1;
+}
+
+/* Custom animation for admin button */
+@keyframes pulse-admin {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.bg-gradient-to-r.from-green-500.to-emerald-600 {
+  animation: pulse-admin 2s infinite;
+}
+
+/* Responsive image containers */
+@media (max-width: 640px) {
+  .h-48 {
+    height: 180px;
+  }
+}
+</style>
+
+<!-- JavaScript for Enhanced Interactions -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Smooth scroll for category filter
+  const categoryLinks = document.querySelectorAll('a[href*="category="]');
+  categoryLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Add active animation
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 200);
+    });
+  });
+
+  // Add hover effect to pagination
+  const paginationLinks = document.querySelectorAll('a[href*="page="]');
+  paginationLinks.forEach(link => {
+    link.addEventListener('mouseenter', function() {
+      if (!this.classList.contains('opacity-50')) {
+        this.style.transform = 'translateY(-2px)';
+      }
+    });
+    link.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+
+  // Add confirmation for delete actions
+  const deleteForms = document.querySelectorAll('form[onsubmit]');
+  deleteForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      if (!confirm('Are you sure you want to delete this blog? This action cannot be undone.')) {
+        e.preventDefault();
+      }
+    });
+  });
+
+  // Lazy loading for images
+  const blogImages = document.querySelectorAll('img[src*="/images.png"]');
+  blogImages.forEach(img => {
+    img.addEventListener('error', function() {
+      this.src = '/images/default-blog.jpg';
+    });
+  });
+});
+</script>
