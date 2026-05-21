@@ -42,7 +42,7 @@ module.exports.adminDashboard = async (req, res) => {
     // Get recent users (last 10)
     const recentUsers = await User.find()
       .sort({ createdAt: -1 })
-      .limit(10)
+      
       .select("name email role isVerified isBlocked createdAt");
 
     // Get recent activities (you might want to create an Activity model)
